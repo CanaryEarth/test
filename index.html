@@ -1,0 +1,1765 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canary — Know what you are breathing</title>
+<meta name="description" content="Canary is a pocketable environmental monitor with an e-paper display. Seven sensors, a full day of history at a glance, and no subscription. Join the founding-batch waitlist.">
+<meta name="theme-color" content="#F4F1EA">
+<meta property="og:title" content="Canary — Know what you are breathing">
+<meta property="og:description" content="A pocketable environmental monitor with an e-paper display. Seven sensors. A full day of history at a glance. No subscription.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="assets/img/hero-1600.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<!--
+  ===================================================================
+   EDIT THESE THREE THINGS BEFORE YOU GO LIVE   (search for: EDIT-ME)
+  ===================================================================
+   1. FORMSPREE ID   Replace YOUR_FORM_ID in BOTH <form action> tags.
+                     Free at formspree.io -> New Form -> copy endpoint.
+                     It looks like: https://formspree.io/f/xdorwkgb
+   2. PRICE          Search "EDIT-ME PRICE" in the Founding Batch
+                     section. Placeholders are $XXX and $YYY.
+   3. LAUNCH WINDOW  Search "EDIT-ME DATE". Currently reads "Fall 2026"
+                     in the announcement bar, hero eyebrow and pricing.
+  ===================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" fetchpriority="high"
+      imagesrcset="assets/img/hero-1000.webp 1000w, assets/img/hero-1600.webp 1600w, assets/img/hero-2400.webp 2400w"
+      imagesizes="100vw">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+/* ==================================================================
+   CANARY - design tokens
+   Palette from branding.txt, adjusted where WCAG required it:
+     - Gold #E8A838 on cream is 1.85:1 -> FILL ONLY, never text on
+       cream. Ink on gold is 7.85:1 (AAA), so gold buttons take ink.
+     - Sage #4A6B5B on ink is 2.76:1 -> dark surfaces use --sage-lit
+       (#95B8A5, 7.53:1) instead.
+     - Ember #D25A3C on cream is 3.53:1 -> body-size alert text uses
+       --ember-deep (#B8482A, 4.66:1).
+   ================================================================== */
+:root{
+  color-scheme: light;
+
+  --cream:      #F4F1EA;
+  --cream-2:    #EDE8DE;
+  --paper:      #FBFAF6;
+  --ink:        #1E2022;
+  --ink-2:      #2A2D30;
+  --muted:      #5C6461;
+  --muted-dark: #A8B0AC;
+  --gold:       #E8A838;
+  --gold-deep:  #C98A1E;
+  --sage:       #4A6B5B;
+  --sage-lit:   #95B8A5;
+  --ember:      #D25A3C;
+  --ember-deep: #B8482A;
+  --line:       #D2CCBE;
+  --line-dark:  #3A3E41;
+
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body:    "Source Serif 4", ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono:    "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --s-1:.25rem; --s-2:.5rem; --s-3:.75rem; --s-4:1rem;
+  --s-5:1.5rem; --s-6:2rem;  --s-7:3rem;   --s-8:4rem;
+  --s-9:6rem;   --s-10:8rem;
+
+  --wrap: 1180px;
+  --radius: 14px;
+  --radius-lg: 22px;
+  --ease: cubic-bezier(.22,.61,.36,1);
+  --dur: 240ms;
+
+  --shadow-sm: 0 1px 2px rgb(30 32 34 / .05), 0 2px 8px rgb(30 32 34 / .04);
+  --shadow-md: 0 2px 4px rgb(30 32 34 / .06), 0 12px 32px rgb(30 32 34 / .08);
+  --shadow-lg: 0 4px 8px rgb(30 32 34 / .07), 0 28px 60px rgb(30 32 34 / .12);
+
+  --z-nav:40; --z-bar:45; --z-menu:60; --z-skip:100;
+}
+
+*,*::before,*::after{ box-sizing:border-box }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-padding-top:5.5rem }
+body{
+  margin:0; background:var(--cream); color:var(--ink);
+  font-family:var(--font-body); font-size:1.0625rem; line-height:1.65;
+  font-optical-sizing:auto; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+img,svg,video{ max-width:100%; height:auto; display:block }
+button,input,textarea{ font:inherit; color:inherit }
+
+/* --- typography ------------------------------------------------- */
+h1,h2,h3,h4{
+  font-family:var(--font-display); font-weight:700;
+  line-height:1.08; letter-spacing:-.02em; margin:0; text-wrap:balance;
+}
+h1{ font-size:clamp(2.5rem,6.2vw,4.6rem); font-weight:800; letter-spacing:-.035em }
+h2{ font-size:clamp(2rem,4.4vw,3.35rem); letter-spacing:-.03em }
+h3{ font-size:clamp(1.2rem,1.9vw,1.5rem); line-height:1.22; letter-spacing:-.015em }
+p{ margin:0; text-wrap:pretty }
+a{ color:inherit }
+
+.eyebrow{
+  font-family:var(--font-mono); font-size:.75rem; font-weight:700;
+  letter-spacing:.18em; text-transform:uppercase; color:var(--sage);
+  margin:0 0 var(--s-4);
+}
+.eyebrow--dark{ color:var(--sage-lit) }
+.lede{ font-size:clamp(1.075rem,1.55vw,1.3rem); line-height:1.6; color:var(--muted); max-width:60ch }
+.lede--dark{ color:var(--muted-dark) }
+.mono{ font-family:var(--font-mono); font-variant-numeric:tabular-nums }
+
+/* --- layout ----------------------------------------------------- */
+.wrap{ width:min(100% - 2.5rem, var(--wrap)); margin-inline:auto }
+@media (min-width:768px){ .wrap{ width:min(100% - 4rem, var(--wrap)) } }
+.section{ padding-block:clamp(var(--s-8),9vw,var(--s-10)) }
+.section--tight{ padding-block:clamp(var(--s-7),6vw,var(--s-9)) }
+.band{ background:var(--cream-2) }
+.dark{ background:var(--ink); color:var(--cream) }
+.dark h1,.dark h2,.dark h3{ color:var(--cream) }
+.section-head{ max-width:52rem; margin-inline:auto; text-align:center; margin-bottom:clamp(var(--s-7),5vw,var(--s-8)) }
+.section-head .lede{ margin-inline:auto; margin-top:var(--s-4) }
+
+/* --- a11y furniture --------------------------------------------- */
+.skip{
+  position:fixed; top:var(--s-3); left:var(--s-3); z-index:var(--z-skip);
+  transform:translateY(-160%); transition:transform 160ms var(--ease);
+  background:var(--ink); color:var(--cream); padding:.7rem 1.1rem;
+  border-radius:10px; font-family:var(--font-display); font-weight:600; text-decoration:none;
+}
+.skip:focus-visible{ transform:none }
+:focus-visible{ outline:3px solid var(--ink); outline-offset:3px; border-radius:4px }
+.dark :focus-visible,.hero-form :focus-visible{ outline-color:var(--gold) }
+.visually-hidden{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* --- buttons ---------------------------------------------------- */
+.btn{
+  --btn-bg:var(--gold); --btn-fg:var(--ink); --btn-bd:transparent;
+  display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
+  min-height:48px; padding:.8rem 1.5rem;
+  background:var(--btn-bg); color:var(--btn-fg);
+  border:1.5px solid var(--btn-bd); border-radius:999px;
+  font-family:var(--font-display); font-weight:700; font-size:.975rem;
+  letter-spacing:-.005em; text-decoration:none; cursor:pointer;
+  transition:background var(--dur) var(--ease), color var(--dur) var(--ease),
+             border-color var(--dur) var(--ease), transform var(--dur) var(--ease),
+             box-shadow var(--dur) var(--ease);
+  touch-action:manipulation;
+}
+.btn:hover{ background:var(--gold-deep); transform:translateY(-1px); box-shadow:var(--shadow-md) }
+.btn:active{ transform:translateY(0) scale(.985) }
+.btn[disabled]{ opacity:.5; cursor:not-allowed; transform:none; box-shadow:none }
+.btn--ghost{ --btn-bg:transparent; --btn-fg:var(--ink); --btn-bd:var(--ink) }
+.btn--ghost:hover{ background:var(--ink); color:var(--cream); border-color:var(--ink) }
+.dark .btn--ghost{ --btn-fg:var(--cream); --btn-bd:#6E7478 }
+.dark .btn--ghost:hover{ background:var(--cream); color:var(--ink); border-color:var(--cream) }
+.btn .ico{ width:1.05em; height:1.05em; flex:none }
+
+/* --- announcement bar ------------------------------------------- */
+.announce{
+  position:relative; z-index:var(--z-bar);
+  background:var(--ink); color:var(--cream);
+  font-family:var(--font-display); font-size:.82rem; font-weight:600;
+  letter-spacing:.005em; text-align:center;
+}
+.announce a{
+  display:flex; align-items:center; justify-content:center; gap:.5rem;
+  min-height:44px; padding:.4rem 1rem; text-decoration:none;
+}
+.announce a:hover .announce-arrow{ transform:translateX(3px) }
+.announce-dot{ width:7px; height:7px; border-radius:50%; background:var(--gold); flex:none }
+.announce-arrow{ transition:transform var(--dur) var(--ease) }
+.announce em{ color:var(--gold); font-style:normal; font-weight:700 }
+
+/* --- header ----------------------------------------------------- */
+.header{
+  position:sticky; top:0; z-index:var(--z-nav);
+  background:rgb(244 241 234 / .86);
+  backdrop-filter:saturate(160%) blur(14px);
+  -webkit-backdrop-filter:saturate(160%) blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.header-in{
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center;
+  gap:var(--s-4); min-height:68px;
+}
+.nav-left{ display:none; align-items:center; gap:var(--s-5) }
+.nav-right{ display:flex; align-items:center; justify-content:flex-end; gap:var(--s-3) }
+.nav-link{
+  font-family:var(--font-display); font-size:.9rem; font-weight:600;
+  text-decoration:none; color:var(--ink); position:relative;
+  display:inline-flex; align-items:center; min-height:44px;
+}
+.nav-link::after{
+  content:""; position:absolute; left:0; right:0; bottom:.7rem; height:2px;
+  background:var(--gold); transform:scaleX(0); transform-origin:left;
+  transition:transform var(--dur) var(--ease);
+}
+.nav-link:hover::after{ transform:scaleX(1) }
+.brand{
+  display:flex; align-items:center; gap:.6rem; text-decoration:none;
+  justify-self:center; padding:.35rem; min-height:44px;
+}
+.brand svg{ width:38px; height:auto; flex:none }
+.brand-word{
+  font-family:var(--font-display); font-weight:700; font-size:1.02rem;
+  letter-spacing:.34em; text-indent:.34em; text-transform:uppercase;
+}
+.icon-btn{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:44px; height:44px; border:0; background:transparent;
+  border-radius:10px; cursor:pointer; color:var(--ink);
+  transition:background var(--dur) var(--ease);
+}
+.icon-btn:hover{ background:rgb(30 32 34 / .07) }
+.menu-btn{ justify-self:start }
+.nav-cta{ display:none }
+@media (min-width:1024px){
+  .nav-left{ display:flex }
+  .menu-btn{ display:none }
+  .nav-cta{ display:inline-flex }
+}
+
+/* --- mobile menu ------------------------------------------------ */
+.menu{
+  position:fixed; inset:0; z-index:var(--z-menu);
+  background:var(--cream); padding:var(--s-5);
+  display:flex; flex-direction:column; gap:var(--s-2);
+  transform:translateX(-100%); visibility:hidden;
+  transition:transform 300ms var(--ease), visibility 0s linear 300ms;
+}
+.menu[data-open="true"]{ transform:none; visibility:visible; transition-delay:0s }
+.menu-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:var(--s-4) }
+.menu a{
+  font-family:var(--font-display); font-size:1.6rem; font-weight:700;
+  letter-spacing:-.02em; text-decoration:none; padding:.7rem 0;
+  border-bottom:1px solid var(--line);
+}
+.menu .btn{ margin-top:var(--s-5) }
+
+/* --- hero ------------------------------------------------------- */
+.hero{ padding-top:clamp(var(--s-7),6vw,var(--s-9)); text-align:center }
+.hero h1{ margin-bottom:var(--s-5) }
+.hero h1 .stroke-gold{
+  background-image:linear-gradient(transparent 62%, rgb(232 168 56 / .55) 62%);
+  background-repeat:no-repeat;
+}
+.hero .lede{ margin-inline:auto; margin-bottom:var(--s-6) }
+.hero-media{
+  margin-top:clamp(var(--s-7),6vw,var(--s-8));
+  width:100vw; margin-left:50%; transform:translateX(-50%);
+}
+.hero-media img{ width:100%; object-fit:cover; aspect-ratio:2.16/1 }
+@media (max-width:640px){ .hero-media img{ aspect-ratio:4/3; object-position:52% 50% } }
+
+/* --- inline email form ------------------------------------------ */
+.hero-form{ max-width:34rem; margin-inline:auto }
+.field-row{ display:flex; flex-direction:column; gap:var(--s-3) }
+@media (min-width:560px){
+  .field-row{
+    flex-direction:row; background:var(--paper);
+    border:1.5px solid var(--line); border-radius:999px; padding:5px;
+    box-shadow:var(--shadow-sm);
+    transition:border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+  .field-row:focus-within{ border-color:var(--ink); box-shadow:var(--shadow-md) }
+  .field-row input{ border:0!important; background:transparent!important; box-shadow:none!important }
+  .field-row input:focus-visible{ outline-offset:-2px }
+}
+.field-row input{
+  flex:1 1 auto; min-width:0; min-height:48px;
+  padding:.8rem 1.1rem; border:1.5px solid var(--line); border-radius:999px;
+  background:var(--paper); color:var(--ink);
+  font-family:var(--font-display); font-size:1rem;
+  transition:border-color var(--dur) var(--ease);
+}
+/* must not inherit --cream from the dark section */
+.dark .field-row input{ color:var(--ink) }
+.field-row input::placeholder{ color:var(--muted); opacity:1 }
+.field-row input:-webkit-autofill{
+  -webkit-text-fill-color:var(--ink);
+  -webkit-box-shadow:0 0 0 40px var(--paper) inset;
+}
+.field-row input:focus{ border-color:var(--ink) }
+.form-note{
+  margin-top:var(--s-3); font-family:var(--font-display);
+  font-size:.82rem; color:var(--muted);
+}
+.dark .form-note{ color:var(--muted-dark) }
+.form-status{
+  margin-top:var(--s-4); font-family:var(--font-display); font-weight:600;
+  font-size:.95rem; display:flex; align-items:center; gap:.5rem;
+  justify-content:center; min-height:1.5rem;
+}
+.form-status:empty{ display:none }
+.form-status[data-tone="ok"]{ color:var(--sage) }
+.form-status[data-tone="err"]{ color:var(--ember-deep) }
+.dark .form-status[data-tone="ok"]{ color:var(--sage-lit) }
+.dark .form-status[data-tone="err"]{ color:#F0906F }
+.hp{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden }
+.spinner{
+  width:1em; height:1em; border:2px solid currentColor; border-right-color:transparent;
+  border-radius:50%; animation:spin .7s linear infinite; flex:none;
+}
+@keyframes spin{ to{ transform:rotate(360deg) } }
+
+/* --- spec strip ------------------------------------------------- */
+.specs{ border-block:1px solid var(--line); background:var(--paper) }
+.specs ul{
+  list-style:none; margin:0; padding:var(--s-5) 0;
+  display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s-4) var(--s-3);
+}
+@media (min-width:640px){ .specs ul{ grid-template-columns:repeat(4,1fr) } }
+@media (min-width:1024px){ .specs ul{ grid-template-columns:repeat(7,1fr) } }
+.specs li{ text-align:center }
+.specs b{
+  display:block; font-family:var(--font-mono); font-size:.95rem;
+  font-weight:700; letter-spacing:.02em;
+}
+.specs span{
+  display:block; font-family:var(--font-display); font-size:.72rem;
+  font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); margin-top:.2rem;
+}
+
+/* --- generic media + text split --------------------------------- */
+.split{ display:grid; gap:clamp(var(--s-6),5vw,var(--s-8)); align-items:center }
+@media (min-width:900px){
+  .split{ grid-template-columns:1fr 1fr }
+  .split--flip .split-media{ order:-1 }
+}
+.split-media img{ border-radius:var(--radius-lg); box-shadow:var(--shadow-lg) }
+@media (min-width:900px){
+  .split-media--tall img{ aspect-ratio:4/3; object-fit:cover; object-position:50% 50% }
+}
+.split-body .lede{ margin-top:var(--s-4) }
+
+.point-list{ list-style:none; margin:var(--s-6) 0 0; padding:0; display:grid; gap:var(--s-4) }
+.point-list li{ display:flex; gap:var(--s-3); align-items:flex-start }
+.point-list .ico{ width:22px; height:22px; flex:none; margin-top:.28rem; color:var(--sage) }
+.dark .point-list .ico{ color:var(--sage-lit) }
+.point-list b{ font-family:var(--font-display); font-weight:700; display:block; letter-spacing:-.01em }
+.point-list p{ color:var(--muted); font-size:.98rem; margin-top:.15rem }
+.dark .point-list p{ color:var(--muted-dark) }
+
+/* --- sensor labels ---------------------------------------------- */
+.sensor-tag{
+  font-family:var(--font-mono); font-size:.7rem; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--sage);
+  display:block; margin-bottom:var(--s-2);
+}
+
+.also{
+  margin-top:var(--s-6); display:grid; gap:var(--s-4);
+  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+}
+.also div{
+  background:var(--paper); border:1px solid var(--line);
+  border-radius:var(--radius); padding:var(--s-5);
+}
+.also .ico{ width:26px; height:26px; color:var(--sage); margin-bottom:var(--s-3) }
+.also b{ font-family:var(--font-display); font-weight:700; display:block; letter-spacing:-.01em }
+.also p{ color:var(--muted); font-size:.94rem; margin-top:.25rem }
+
+/* --- carousel --------------------------------------------------- */
+.carousel-head{
+  display:flex; align-items:flex-end; justify-content:space-between;
+  gap:var(--s-5); margin-bottom:var(--s-6);
+}
+.carousel-head--center{ flex-direction:column; align-items:center; text-align:center }
+.carousel-head--center .section-head{ margin-bottom:var(--s-5) }
+.carousel-nav{ display:flex; gap:var(--s-2); flex:none }
+.carousel-nav button{
+  width:46px; height:46px; border-radius:50%; cursor:pointer;
+  border:1.5px solid var(--ink); background:transparent; color:var(--ink);
+  display:inline-flex; align-items:center; justify-content:center;
+  transition:background var(--dur) var(--ease), color var(--dur) var(--ease), opacity var(--dur) var(--ease);
+}
+.carousel-nav button:hover:not([disabled]){ background:var(--ink); color:var(--cream) }
+.carousel-nav button[disabled]{ opacity:.3; cursor:not-allowed }
+.rail{
+  display:flex; gap:var(--s-4); overflow-x:auto; scroll-snap-type:x proximity;
+  scroll-behavior:smooth; padding-bottom:var(--s-4);
+  align-items:stretch;
+  scrollbar-width:thin; scrollbar-color:var(--line) transparent;
+  --rail-pad:max(1.25rem, calc(50vw - var(--wrap)/2));
+  padding-inline:var(--rail-pad);
+  scroll-padding-inline:var(--rail-pad);
+}
+.rail::-webkit-scrollbar{ height:8px }
+.rail::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px }
+.card{
+  position:relative; flex:0 0 78%; max-width:340px; scroll-snap-align:start;
+  border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);
+  background:var(--ink);
+}
+@media (min-width:640px){ .card{ flex-basis:44% } }
+@media (min-width:1024px){ .card{ flex-basis:27% } }
+.card img{ width:100%; aspect-ratio:4/5; object-fit:cover }
+.card figcaption{
+  position:absolute; inset:auto 0 0 0; padding:var(--s-6) var(--s-5) var(--s-5);
+  background:linear-gradient(to top, rgb(18 20 21 / .92) 12%, rgb(18 20 21 / .72) 48%, rgb(18 20 21 / 0));
+  color:var(--cream);
+}
+.card h3{ font-size:1.28rem; color:var(--cream) }
+.card p{ color:#D6DAD7; font-size:.94rem; margin-top:.3rem; line-height:1.45 }
+
+/* --- 3D device fan ---------------------------------------------- */
+.stage{
+  position:relative; perspective:1500px; perspective-origin:50% 46%;
+  margin-inline:auto; touch-action:pan-y;
+}
+.fan{
+  position:relative; list-style:none; margin:0 auto; padding:0;
+  transform-style:preserve-3d;
+  height:clamp(190px, 30vw, 330px);
+}
+.fan-item{ margin:0 }
+.js .fan-item{
+  position:absolute; top:0; left:50%;
+  width:clamp(230px, 40vw, 430px);
+  margin-left:calc(clamp(230px, 40vw, 430px) / -2);
+  transform-style:preserve-3d; will-change:transform, opacity;
+  transition:transform 720ms var(--ease), opacity 720ms var(--ease),
+             filter 720ms var(--ease);
+}
+.fan-item img{
+  width:100%; height:auto; display:block;
+  filter:drop-shadow(0 22px 34px rgb(30 32 34 / .30));
+}
+/* without JS the devices simply stack as a normal responsive grid */
+.fan{ display:grid; gap:var(--s-5); grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); height:auto }
+.js .fan{ display:block; height:clamp(190px, 30vw, 330px) }
+
+.fan-cap{ max-width:44rem; margin:clamp(var(--s-6),4vw,var(--s-7)) auto 0; text-align:center }
+.js .fan-cap{ display:none }
+.js .fan-cap[data-active]{ display:block; animation:capIn 460ms var(--ease) both }
+@keyframes capIn{ from{ opacity:0; transform:translateY(8px) } to{ opacity:1; transform:none } }
+.fan-cap .sensor-tag{ margin-bottom:var(--s-2) }
+.fan-cap p{ color:var(--muted); margin-top:var(--s-3) }
+
+.fan-controls{
+  display:flex; align-items:center; justify-content:center; gap:var(--s-3);
+  margin-top:clamp(var(--s-5),3vw,var(--s-6));
+}
+.fan-dots{ display:flex; gap:var(--s-2); align-items:center }
+.fan-dots button{
+  width:32px; height:32px; padding:0; border:0; background:transparent;
+  cursor:pointer; display:inline-grid; place-items:center; border-radius:50%;
+}
+.fan-dots button::after{
+  content:""; width:8px; height:8px; border-radius:50%;
+  background:var(--line); border:1px solid #B5AD9A;
+  transition:background var(--dur) var(--ease), transform var(--dur) var(--ease);
+}
+.fan-dots button[aria-current="true"]::after{
+  background:var(--ink); border-color:var(--ink); transform:scale(1.35);
+}
+.fan-dots button:hover::after{ background:var(--muted) }
+
+/* --- spec table ------------------------------------------------- */
+.spec-cols{ display:grid; gap:var(--s-7) }
+@media (min-width:860px){ .spec-cols{ grid-template-columns:repeat(2,1fr); gap:var(--s-7) var(--s-8) } }
+.spec-group + .spec-group{ margin-top:var(--s-6) }
+.spec-group h3{
+  font-family:var(--font-mono); font-size:.72rem; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--sage);
+  padding-bottom:var(--s-3); border-bottom:1.5px solid var(--ink); margin-bottom:var(--s-1);
+}
+.spec-group dl{ margin:0 }
+.spec-group dl > div{
+  display:flex; gap:var(--s-5); justify-content:space-between; align-items:baseline;
+  padding:.7rem 0; border-bottom:1px solid var(--line);
+}
+.spec-group dt{
+  font-family:var(--font-display); font-size:.92rem; font-weight:600;
+  color:var(--muted); flex:0 1 auto;
+}
+.spec-group dd{
+  margin:0; text-align:right; font-family:var(--font-mono); font-size:.88rem;
+  font-variant-numeric:tabular-nums; overflow-wrap:anywhere; flex:0 1 auto;
+}
+.spec-note{
+  margin-top:var(--s-6); font-family:var(--font-display); font-size:.85rem;
+  color:var(--muted); text-align:center;
+}
+
+/* --- testimonials ----------------------------------------------- */
+.quote{
+  background:var(--paper); border:1px solid var(--line);
+  border-radius:var(--radius-lg); padding:var(--s-6);
+  display:flex; flex-direction:column; gap:var(--s-4);
+  /* rail item: equal height, one card per snap position */
+  flex:0 0 82%; max-width:420px; scroll-snap-align:start;
+}
+@media (min-width:700px){ .quote{ flex-basis:46% } }
+@media (min-width:1050px){ .quote{ flex-basis:31% } }
+.quote-mark{ width:26px; height:auto; color:var(--gold); flex:none }
+.quote blockquote{ margin:0; font-size:1.06rem; line-height:1.55 }
+.quote blockquote{ flex:1 1 auto }
+.quote figcaption{ margin-top:auto; padding-top:var(--s-4); border-top:1px solid var(--line) }
+.quote cite{
+  font-style:normal; font-family:var(--font-display);
+  font-weight:700; font-size:.94rem; display:block;
+}
+.quote span{ font-size:.86rem; color:var(--muted); display:block; margin-top:.1rem }
+
+/* --- enterprise ------------------------------------------------- */
+.dark .split-media img{ box-shadow:0 30px 70px rgb(0 0 0 / .45) }
+.ent-stat{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:var(--s-5); margin-top:var(--s-7);
+  border-top:1px solid var(--line-dark); padding-top:var(--s-6);
+}
+.ent-stat b{ font-family:var(--font-mono); font-size:1.55rem; display:block; color:var(--gold) }
+.ent-stat span{ font-family:var(--font-display); font-size:.85rem; color:var(--muted-dark); display:block; margin-top:.2rem }
+
+/* --- pricing ---------------------------------------------------- */
+.price-card{
+  max-width:38rem; margin-inline:auto; background:var(--paper);
+  border:1.5px solid var(--ink); border-radius:var(--radius-lg);
+  overflow:hidden; box-shadow:var(--shadow-lg);
+}
+.price-top{
+  background:var(--ink); color:var(--cream); padding:var(--s-5) var(--s-6);
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-4);
+  flex-wrap:wrap;
+}
+.price-top strong{ font-family:var(--font-display); font-size:1rem; letter-spacing:-.01em }
+.price-badge{
+  font-family:var(--font-mono); font-size:.7rem; font-weight:700;
+  letter-spacing:.14em; text-transform:uppercase;
+  background:var(--gold); color:var(--ink); padding:.35rem .7rem; border-radius:999px;
+}
+.price-body{ padding:clamp(var(--s-6),4vw,var(--s-7)) }
+.price-figure{ display:flex; align-items:baseline; gap:var(--s-3); flex-wrap:wrap }
+.price-now{ font-family:var(--font-display); font-weight:800; font-size:clamp(2.6rem,6vw,3.4rem); letter-spacing:-.04em; line-height:1 }
+.price-was{ font-family:var(--font-mono); font-size:1.1rem; color:var(--muted); text-decoration:line-through }
+.price-save{
+  font-family:var(--font-display); font-weight:700; font-size:.85rem;
+  color:var(--ink); background:rgb(232 168 56 / .35);
+  padding:.25rem .6rem; border-radius:999px;
+}
+.price-list{ list-style:none; margin:var(--s-6) 0; padding:0; display:grid; gap:var(--s-3) }
+.price-list li{ display:flex; gap:var(--s-3); align-items:flex-start; font-size:1rem }
+.price-list .ico{ width:20px; height:20px; color:var(--sage); flex:none; margin-top:.3rem }
+.price-fine{ font-family:var(--font-display); font-size:.82rem; color:var(--muted); margin-top:var(--s-4); text-align:center }
+
+/* --- waitlist band ---------------------------------------------- */
+.waitlist{ text-align:center }
+.waitlist .lede{ margin-inline:auto; margin-bottom:var(--s-6) }
+.waitlist .hero-form{ max-width:36rem }
+
+/* --- FAQ -------------------------------------------------------- */
+.faq{ max-width:48rem; margin-inline:auto; border-top:1px solid var(--line) }
+.faq details{ border-bottom:1px solid var(--line) }
+.faq summary{
+  display:flex; align-items:center; justify-content:space-between; gap:var(--s-4);
+  padding:var(--s-5) var(--s-2); cursor:pointer; list-style:none;
+  font-family:var(--font-display); font-weight:700; font-size:1.06rem;
+  letter-spacing:-.01em; min-height:56px;
+  transition:color var(--dur) var(--ease);
+}
+.faq summary::-webkit-details-marker{ display:none }
+.faq summary > span{ flex:1 1 auto; min-width:0 }
+.faq summary:hover{ color:var(--sage) }
+.faq summary .chev{
+  width:20px; height:20px; flex:none; color:var(--muted);
+  transition:transform var(--dur) var(--ease);
+}
+.faq details[open] summary .chev{ transform:rotate(180deg) }
+.faq-a{ padding:0 var(--s-2) var(--s-5); color:var(--muted); max-width:62ch }
+
+/* --- footer ----------------------------------------------------- */
+.footer{ background:var(--ink); color:var(--cream); padding-block:var(--s-8) var(--s-6) }
+.footer-top{
+  display:grid; gap:var(--s-6); padding-bottom:var(--s-7);
+  border-bottom:1px solid var(--line-dark);
+}
+@media (min-width:760px){ .footer-top{ grid-template-columns:1.4fr 1fr 1fr } }
+.footer .brand-word{ color:var(--cream) }
+.footer h3{ font-size:.78rem; font-family:var(--font-mono); font-weight:700; letter-spacing:.16em; text-transform:uppercase; color:var(--muted-dark); margin-bottom:var(--s-4) }
+.footer ul{ list-style:none; margin:0; padding:0; display:grid }
+.footer a{
+  text-decoration:none; font-family:var(--font-display); font-size:.94rem;
+  color:var(--cream); opacity:.85;
+  display:inline-flex; align-items:center; min-height:44px;
+}
+.footer a:hover{ opacity:1; color:var(--gold) }
+.footer-bottom{
+  display:flex; flex-wrap:wrap; gap:var(--s-4); justify-content:space-between;
+  align-items:center; padding-top:var(--s-5);
+  font-family:var(--font-display); font-size:.84rem; color:var(--muted-dark);
+}
+.social{ display:flex; gap:var(--s-2) }
+.social a{
+  width:44px; height:44px; min-height:44px; border-radius:50%; border:1px solid var(--line-dark);
+  display:inline-flex; align-items:center; justify-content:center; opacity:1;
+  transition:background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.social a:hover{ background:var(--cream); color:var(--ink); border-color:var(--cream) }
+.social svg{ width:19px; height:19px }
+
+/* --- scroll reveal ----------------------------------------------
+   Scoped to .js so that with JavaScript off every section stays
+   visible instead of being stuck at opacity:0.                    */
+.js .reveal{ opacity:0; transform:translateY(18px) }
+.js .reveal.in{ opacity:1; transform:none; transition:opacity 520ms var(--ease), transform 520ms var(--ease) }
+.js .reveal.in.d1{ transition-delay:70ms }
+.js .reveal.in.d2{ transition-delay:140ms }
+.js .reveal.in.d3{ transition-delay:210ms }
+
+/* --- logo draw-on ----------------------------------------------- */
+.mark-draw{ stroke-dasharray:var(--len); stroke-dashoffset:var(--len); animation:draw 2.2s var(--ease) .25s forwards }
+@keyframes draw{ to{ stroke-dashoffset:0 } }
+
+/* --- reduced motion --------------------------------------------- */
+@media (prefers-reduced-motion: reduce){
+  html{ scroll-behavior:auto }
+  *,*::before,*::after{
+    animation-duration:.01ms!important; animation-iteration-count:1!important;
+    transition-duration:.01ms!important; scroll-behavior:auto!important;
+  }
+  .js .reveal{ opacity:1; transform:none }
+  .mark-draw{ stroke-dashoffset:0; animation:none }
+  .rail{ scroll-behavior:auto }
+  .spinner{ animation:none; border-right-color:currentColor; opacity:.5 }
+}
+</style>
+<script>document.documentElement.className += " js";</script>
+</head>
+
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<!-- EDIT-ME DATE -->
+<div class="announce">
+  <a href="#waitlist">
+    <span class="announce-dot" aria-hidden="true"></span>
+    <span>Founding batch ships <em>Fall 2026</em> &mdash; waitlist members get early-bird pricing</span>
+    <svg class="announce-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </a>
+</div>
+
+<header class="header">
+  <div class="wrap header-in">
+    <nav class="nav-left" aria-label="Primary">
+      <a class="nav-link" href="#product">Product</a>
+      <a class="nav-link" href="#sensors">Sensors</a>
+      <a class="nav-link" href="#specs">Specs</a>
+      <a class="nav-link" href="#organizations">Organizations</a>
+      <a class="nav-link" href="#faq">FAQ</a>
+    </nav>
+
+    <button class="icon-btn menu-btn" id="menuOpen" aria-expanded="false" aria-controls="mobileMenu">
+      <span class="visually-hidden">Open menu</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+
+    <a class="brand" href="#top" aria-label="Canary — home">
+      <svg viewBox="135 23 125 93" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="overflow:visible">
+        <path fill="none" stroke="var(--ink)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d="m 185.28631,85.449901 c 0.53981,-4.739076 3.10759,-11.309465 7.85844,-15.242635 6.52824,-5.40464 15.77441,-6.387205 23.66324,-8.386515 5.00851,-1.26934 12.50459,-5.354226 14.99126,-6.562898 1.8823,1.420138 -2.72461,33.867042 -16.73187,39.590572 -6.01541,2.457965 -13.43565,1.040776 -19.38442,-0.435638 -1.12747,-0.279824 -6.55337,-2.503756 -6.47924,-0.710766 0.0398,0.962277 6.06003,2.400837 7.25956,2.685477 7.38681,1.642832 14.03814,1.572882 21.40304,-0.521801 15.0143,-4.27029 22.21028,-19.516716 25.59988,-33.672266 1.14869,-4.79712 1.27228,-10.151599 2.47816,-14.915109 0.73637,-2.90881 1.71572,-5.395932 3.85031,-7.529462 1.23336,-1.23275 2.79988,-2.538041 4.34476,-3.267113 3.14908,-1.486146 3.28012,-1.906641 0.51541,-2.474151 -3.83753,-0.787727 -4.79503,-0.498528 -7.12064,-1.667071 -6.36902,-3.2002 -11.1764,-6.954139 -18.65481,-6.422649 -9.06366,0.64416 -17.6416,7.649078 -24.25034,13.322308 -15.34967,13.17684 -28.83442,28.439963 -42.13003,43.637753 -6.74483,7.70981 -13.19973,15.280623 -19.60725,23.273943 -1.54631,1.929 -2.87688,3.55362 -4.58545,5.58254 -0.643,0.76355 -1.56438,2.43374 -0.64515,2.9956 1.24622,0.76173 14.54767,-8.94105 19.82505,-12.16023 6.22971,-3.86317 13.04786,-7.2563 19.94447,-9.76933 9.32262,-3.39703 18.68446,-5.380027 27.50726,-10.052607 6.56233,-3.47543 13.23832,-8.245034 17.65457,-14.495866"/>
+      </svg>
+      <span class="brand-word">Canary</span>
+    </a>
+
+    <div class="nav-right">
+      <a class="btn nav-cta" href="#waitlist">Join the waitlist</a>
+    </div>
+  </div>
+</header>
+
+<div class="menu" id="mobileMenu" data-open="false" role="dialog" aria-modal="true" aria-label="Site menu">
+  <div class="menu-head">
+    <span class="brand-word">Canary</span>
+    <button class="icon-btn" id="menuClose">
+      <span class="visually-hidden">Close menu</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <a href="#product">Product</a>
+  <a href="#sensors">Sensors</a>
+  <a href="#specs">Specs</a>
+  <a href="#repair">Repair</a>
+  <a href="#organizations">Organizations</a>
+  <a href="#faq">FAQ</a>
+  <a class="btn" href="#waitlist">Join the waitlist</a>
+</div>
+
+<main id="main">
+
+<!-- ============================= HERO ============================= -->
+<section class="hero wrap" id="top">
+  <!-- EDIT-ME DATE -->
+  <p class="eyebrow">Founding batch &middot; Fall 2026</p>
+  <h1>Know what you are<br><span class="stroke-gold">actually breathing.</span></h1>
+  <p class="lede">Canary is a pocketable environmental monitor with an e&#8209;paper display. Seven sensors, a full day of history on screen, and nothing to subscribe to. Put it on a desk, a nightstand or a nursery shelf and it just keeps watch.</p>
+
+  <form class="hero-form" action="https://formspree.io/f/mqpznawg" method="POST" data-waitlist novalidate>
+    <!-- EDIT-ME FORMSPREE ID (above) -->
+    <label class="visually-hidden" for="email-hero">Email address</label>
+    <div class="field-row">
+      <input id="email-hero" type="email" name="email" required autocomplete="email"
+             inputmode="email" placeholder="you@example.com" aria-describedby="note-hero">
+      <button class="btn" type="submit">
+        <span data-label>Join the waitlist</span>
+      </button>
+    </div>
+    <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <input type="hidden" name="_subject" value="Canary waitlist signup">
+    <input type="hidden" name="source" value="hero">
+    <p class="form-note" id="note-hero">Early-bird pricing and first access. No other email, ever.</p>
+    <p class="form-status" role="status" aria-live="polite"></p>
+  </form>
+
+  <div class="hero-media">
+    <picture>
+      <source type="image/webp" sizes="100vw"
+              srcset="assets/img/hero-1000.webp 1000w, assets/img/hero-1600.webp 1600w, assets/img/hero-2400.webp 2400w">
+      <img src="assets/img/hero-1600.jpg" width="4000" height="1848" fetchpriority="high" decoding="async"
+           sizes="100vw"
+           srcset="assets/img/hero-1000.jpg 1000w, assets/img/hero-1600.jpg 1600w, assets/img/hero-2400.jpg 2400w"
+           alt="Three Canary monitors on a wooden desk, each showing a different e-paper readout: particulate matter, carbon dioxide and ambient pressure, plotted over the last day.">
+    </picture>
+  </div>
+</section>
+
+<!-- ============================ SPECS ============================= -->
+<section class="specs" aria-label="What Canary measures">
+  <div class="wrap">
+    <ul>
+      <li><b>PM<sub>2.5</sub></b><span>Particulates</span></li>
+      <li><b>PM<sub>10</sub></b><span>Coarse dust</span></li>
+      <li><b>CO<sub>2</sub></b><span>Stale air</span></li>
+      <li><b>UV&#8209;B</b><span>240&ndash;320&nbsp;nm</span></li>
+      <li><b>&deg;C&nbsp;/&nbsp;&deg;F</b><span>Temperature</span></li>
+      <li><b>%RH</b><span>Humidity</span></li>
+      <li><b>kPa</b><span>Pressure</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- =========================== PRODUCT ============================ -->
+<section class="section" id="product">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">The device</p>
+      <h2>More than a monitor.</h2>
+      <p class="lede">Most air quality gadgets give you one number and a coloured ring. Canary gives you the shape of your whole day.</p>
+    </div>
+
+    <div class="split">
+      <div class="split-media split-media--tall reveal">
+        <picture>
+          <source type="image/webp" sizes="(min-width:900px) 46vw, 92vw"
+                  srcset="assets/img/hand-800.webp 800w, assets/img/hand-1200.webp 1200w, assets/img/hand-1800.webp 1800w">
+          <img src="assets/img/hand-1200.jpg" width="4000" height="1848" loading="lazy" decoding="async"
+               sizes="(min-width:900px) 46vw, 92vw"
+               srcset="assets/img/hand-800.jpg 800w, assets/img/hand-1200.jpg 1200w, assets/img/hand-1800.jpg 1800w"
+               alt="A hand holding a Canary monitor, roughly the size of a deck of cards, showing 503 ppm carbon dioxide and a 24-hour graph.">
+        </picture>
+      </div>
+      <div class="split-body reveal d1">
+        <h3>An e&#8209;paper display that never asks for your attention.</h3>
+        <p class="lede">No glare, no backlight glow at 3am, no notification badge. The screen holds its last reading even between refreshes, and it stays legible in direct sunlight.</p>
+        <ul class="point-list">
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-6 4 4 4-7 5 5"/><path d="M3 21h18"/></svg>
+            <div><b>24 hours on screen</b><p>Every sensor plots its own history, so you see the spike and what caused it &mdash; not just the number right now.</p></div>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16"/><path d="M12 9h5M12 13h5"/></svg>
+            <div><b>Logs to a microSD card</b><p>Months of readings written locally. Pull the card, open the file. Nothing is held hostage behind an account.</p></div>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 2"/><path d="M16.5 3.5l4 4"/><path d="M20.5 3.5l-4 4"/></svg>
+            <div><b>No subscription, no cloud requirement</b><p>Canary works fully offline. If you want dashboards and remote alerts, you can run the server yourself.</p></div>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+            <div><b>Yours to reconfigure</b><p>Build your own screen layouts, choose which readings sit where, and schedule what the display fetches.</p></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== SENSORS ============================ -->
+<section class="section band" id="sensors">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Seven sensors</p>
+      <h2>Every reading, plotted.</h2>
+      <p class="lede">Sensor modules sourced from Switzerland, Germany, Korea and Canada &mdash; each one drawing its own 24&#8209;hour trace on the e&#8209;paper screen.</p>
+    </div>
+
+    <div class="stage reveal" data-fan
+         role="group" aria-roledescription="carousel" aria-label="Canary sensor readouts">
+      <ul class="fan">
+        <li class="fan-item" data-fan-item="0">
+          <picture>
+            <source type="image/webp" sizes="(min-width:900px) 430px, 40vw"
+                    srcset="assets/img/dev-pm-560.webp 560w, assets/img/dev-pm-820.webp 820w">
+            <img src="assets/img/dev-pm-560.png" width="980" height="632"
+                 loading="lazy" decoding="async" sizes="(min-width:900px) 430px, 40vw"
+                 srcset="assets/img/dev-pm-560.png 560w, assets/img/dev-pm-820.png 820w"
+                 alt="A Canary showing particulate matter, with a tall smoke spike rising above the day&#39;s baseline.">
+          </picture>
+        </li>
+        <li class="fan-item" data-fan-item="1">
+          <picture>
+            <source type="image/webp" sizes="(min-width:900px) 430px, 40vw"
+                    srcset="assets/img/dev-co2-560.webp 560w, assets/img/dev-co2-820.webp 820w">
+            <img src="assets/img/dev-co2-560.png" width="980" height="632"
+                 loading="lazy" decoding="async" sizes="(min-width:900px) 430px, 40vw"
+                 srcset="assets/img/dev-co2-560.png 560w, assets/img/dev-co2-820.png 820w"
+                 alt="A Canary showing 889 ppm carbon dioxide, the overnight curve climbing then collapsing when a door opened.">
+          </picture>
+        </li>
+        <li class="fan-item" data-fan-item="2">
+          <picture>
+            <source type="image/webp" sizes="(min-width:900px) 430px, 40vw"
+                    srcset="assets/img/dev-temp-560.webp 560w, assets/img/dev-temp-820.webp 820w">
+            <img src="assets/img/dev-temp-560.png" width="980" height="632"
+                 loading="lazy" decoding="async" sizes="(min-width:900px) 430px, 40vw"
+                 srcset="assets/img/dev-temp-560.png 560w, assets/img/dev-temp-820.png 820w"
+                 alt="A Canary showing the temperature trace for the last day.">
+          </picture>
+        </li>
+        <li class="fan-item" data-fan-item="3">
+          <picture>
+            <source type="image/webp" sizes="(min-width:900px) 430px, 40vw"
+                    srcset="assets/img/dev-pressure-560.webp 560w, assets/img/dev-pressure-820.webp 820w">
+            <img src="assets/img/dev-pressure-560.png" width="980" height="632"
+                 loading="lazy" decoding="async" sizes="(min-width:900px) 430px, 40vw"
+                 srcset="assets/img/dev-pressure-560.png 560w, assets/img/dev-pressure-820.png 820w"
+                 alt="A Canary showing ambient pressure in kilopascals rising and falling across a day.">
+          </picture>
+        </li>
+      </ul>
+
+      <div class="fan-cap" data-fan-cap="0" data-active>
+        <span class="sensor-tag">Particulate matter</span>
+        <h3>It smells smoke before you do.</h3>
+        <p>A dual&#8209;laser sensor counts particles down to PM<sub>0.5</sub> &mdash; wildfire smoke, cooking fumes, wood burning, the dust from a renovation next door. These are the particles small enough to travel deep into your lungs, and the ones outdoor air quality reports cannot see inside your walls.</p>
+      </div>
+      <div class="fan-cap" data-fan-cap="1">
+        <span class="sensor-tag">Carbon dioxide</span>
+        <h3>Watch a closed room go stale.</h3>
+        <p>A Swiss laser&#8209;based CO<sub>2</sub> sensor, accurate enough to count how many people walked into a room. Rising CO<sub>2</sub> is the clearest signal that a space has stopped ventilating &mdash; and the reason a bedroom or a meeting room quietly drains your concentration.</p>
+      </div>
+      <div class="fan-cap" data-fan-cap="2">
+        <span class="sensor-tag">Temperature</span>
+        <h3>The microclimate your thermostat misses.</h3>
+        <p>Your hallway thermostat does not know what the nursery does at 4am, or how hot the conservatory gets by noon. Leave a Canary in the room that matters &mdash; or with the pets and plants you left at home.</p>
+      </div>
+      <div class="fan-cap" data-fan-cap="3">
+        <span class="sensor-tag">Ambient pressure</span>
+        <h3>Weather you can feel coming.</h3>
+        <p>A falling barometer arrives hours before the storm does &mdash; and often before the headache or the aching joint that comes with it. Canary keeps the curve, so a pattern you had only suspected becomes something you can actually point at.</p>
+      </div>
+
+      <p class="visually-hidden" data-fan-status role="status" aria-live="polite"></p>
+
+      <div class="fan-controls">
+        <div class="carousel-nav">
+          <button type="button" data-fan-prev><span class="visually-hidden">Previous sensor</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+          </button>
+        </div>
+        <div class="fan-dots">
+          <button type="button" data-fan-dot="0" aria-current="true">
+            <span class="visually-hidden">Show particulate matter</span>
+          </button>
+          <button type="button" data-fan-dot="1" aria-current="false">
+            <span class="visually-hidden">Show carbon dioxide</span>
+          </button>
+          <button type="button" data-fan-dot="2" aria-current="false">
+            <span class="visually-hidden">Show temperature</span>
+          </button>
+          <button type="button" data-fan-dot="3" aria-current="false">
+            <span class="visually-hidden">Show ambient pressure</span>
+          </button>
+        </div>
+        <div class="carousel-nav">
+          <button type="button" data-fan-play aria-pressed="false">
+            <span class="visually-hidden" data-fan-play-label>Pause the sensor carousel</span>
+            <svg data-fan-icon-pause width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
+            <svg data-fan-icon-play width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:none"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.2-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z"/></svg>
+          </button>
+          <button type="button" data-fan-next><span class="visually-hidden">Next sensor</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="also reveal">
+      <div>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
+        <b>True UV&#8209;B</b>
+        <p>Measures the 240&ndash;320&nbsp;nm band that actually burns skin, rather than estimating it from visible light like most consumer sensors.</p>
+      </div>
+      <div>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7s6 6.6 6 10.6a6 6 0 0 1-12 0c0-4 6-10.6 6-10.6z"/></svg>
+        <b>Relative humidity</b>
+        <p>Too dry cracks skin and sinuses; too damp invites mould and dust mites. Canary shows you which way your rooms actually drift.</p>
+      </div>
+      <div>
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="8" r="1.4"/><circle cx="12" cy="14" r="2.3"/><circle cx="18" cy="7" r="1"/><circle cx="16.5" cy="17" r="1.7"/><circle cx="8" cy="17.5" r="1"/></svg>
+        <b>Particle size histogram</b>
+        <p>Not just how much, but how big. The size distribution is what separates kitchen grease from road dust from wildfire smoke.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================== CAROUSEL ============================ -->
+<section class="section" aria-labelledby="lives-h">
+  <div class="wrap">
+    <div class="carousel-head reveal">
+      <div>
+        <p class="eyebrow">In the wild</p>
+        <h2 id="lives-h">Where Canary lives.</h2>
+      </div>
+      <div class="carousel-nav">
+        <button type="button" data-rail-prev="rail" aria-controls="rail"><span class="visually-hidden">Previous</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button type="button" data-rail-next="rail" aria-controls="rail"><span class="visually-hidden">Next</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail" id="rail" data-rail tabindex="0" role="region" aria-label="Canary in everyday settings — scrollable gallery">
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/amber-700.webp 700w, assets/img/amber-1080.webp 1080w">
+        <img src="assets/img/amber-1080.jpg" width="1080" height="810" loading="lazy" decoding="async"
+             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
+             srcset="assets/img/amber-700.jpg 700w, assets/img/amber-1080.jpg 1080w"
+             alt="A Canary in a warm yellow case on a wooden table, its screen showing a long overnight particulate hump.">
+      </picture>
+      <figcaption><h3>At home</h3><p>The overnight hump nobody knew about.</p></figcaption>
+    </figure>
+
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/hand-800.webp 800w, assets/img/hand-1200.webp 1200w">
+        <img src="assets/img/hand-1200.jpg" width="4000" height="1848" loading="lazy" decoding="async"
+             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
+             srcset="assets/img/hand-800.jpg 800w, assets/img/hand-1200.jpg 1200w"
+             alt="A Canary held in one hand beside a keyboard, showing a carbon dioxide reading."
+             style="object-position:58% 50%">
+      </picture>
+      <figcaption><h3>In hand</h3><p>Pocketable. Readable in full sun.</p></figcaption>
+    </figure>
+
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/chess-800.webp 800w, assets/img/chess-1200.webp 1200w">
+        <img src="assets/img/chess-1200.jpg" width="4000" height="1848" loading="lazy" decoding="async"
+             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
+             srcset="assets/img/chess-800.jpg 800w, assets/img/chess-1200.jpg 1200w"
+             alt="A Canary standing at the edge of a chessboard mid-game, showing 846 ppm carbon dioxide."
+             style="object-position:70% 50%">
+      </picture>
+      <figcaption><h3>At the table</h3><p>Silent. No fan, no chime, no glow.</p></figcaption>
+    </figure>
+
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/gold-700.webp 700w, assets/img/gold-1000.webp 1000w, assets/img/gold-1600.webp 1600w">
+        <img src="assets/img/gold-1000.jpg" width="2660" height="1848" loading="lazy" decoding="async"
+             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
+             srcset="assets/img/gold-700.jpg 700w, assets/img/gold-1000.jpg 1000w, assets/img/gold-1600.jpg 1600w"
+             alt="A Canary on a reflective gold surface showing 585 ppm carbon dioxide and the night's full curve.">
+      </picture>
+      <figcaption><h3>On the desk</h3><p>A whole working day, at a glance.</p></figcaption>
+    </figure>
+
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/mask-700.webp 700w, assets/img/mask-1080.webp 1080w">
+        <img src="assets/img/mask-1080.jpg" width="1080" height="498" loading="lazy" decoding="async"
+             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
+             srcset="assets/img/mask-700.jpg 700w, assets/img/mask-1080.jpg 1080w"
+             alt="A Canary displaying the words Ready, Place mask over holes, with a line drawing of a respirator mask.">
+      </picture>
+      <figcaption><h3>Mask test</h3><p>Find out what your respirator really filters.</p></figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- =========================== REPAIR ============================= -->
+<section class="section dark" id="repair">
+  <div class="wrap">
+    <div class="split split--flip">
+      <div class="split-media reveal">
+        <picture>
+          <source type="image/webp" sizes="(min-width:900px) 46vw, 92vw" srcset="assets/img/repair-800.webp 800w, assets/img/repair-1200.webp 1200w, assets/img/repair-1920.webp 1920w">
+          <img src="assets/img/repair-1200.jpg" width="1920" height="887" loading="lazy" decoding="async"
+               sizes="(min-width:900px) 46vw, 92vw"
+               srcset="assets/img/repair-800.jpg 800w, assets/img/repair-1200.jpg 1200w, assets/img/repair-1920.jpg 1920w"
+               alt="A Canary laid out in parts on a wooden bench: the assembled unit, a spare e-paper panel, battery, antenna, USB-C board, sensor module, speaker and ribbon cables.">
+        </picture>
+      </div>
+      <div class="split-body reveal d1">
+        <p class="eyebrow eyebrow--dark">Right to repair</p>
+        <h2>Built to be opened.</h2>
+        <p class="lede lede--dark">Every part you can see here is a part you can replace. The battery, the e&#8209;paper panel, the sensor module, the USB&#8209;C board &mdash; all of it comes apart with ordinary tools and goes back together again.</p>
+        <p class="lede lede--dark" style="margin-top:var(--s-4)">We would rather sell you one Canary that lasts a decade than five that do not. That is a design constraint, not a marketing line: no glue where a screw would do, no pairing locks, no parts you have to ask our permission to buy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ SPECS ============================= -->
+<section class="section band" id="specs">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Specifications</p>
+      <h2>The numbers.</h2>
+      <p class="lede">Seven sensor modules, one e&#8209;paper screen, and a battery that charges over the same USB&#8209;C cable as everything else you own.</p>
+    </div>
+
+    <div class="spec-cols reveal">
+      <div>
+        <div class="spec-group">
+          <h3>Display</h3>
+          <dl>
+            <div><dt>Type</dt><dd>E&#8209;paper, monochrome</dd></div>
+            <div><dt>Diagonal</dt><dd>4.26&Prime;</dd></div>
+            <div><dt>Resolution</dt><dd>800 &times; 480</dd></div>
+            <div><dt>Backlight</dt><dd>None</dd></div>
+            <!-- EDIT-ME SPECS - add from datasheet if you want them shown:
+            <div><dt>Greyscale</dt><dd>? levels</dd></div>
+            <div><dt>Refresh</dt><dd>? s full refresh</dd></div>
+            -->
+          </dl>
+        </div>
+
+        <div class="spec-group">
+          <h3>Power</h3>
+          <dl>
+            <div><dt>Battery</dt><dd>2000 mAh Li&#8209;po</dd></div>
+            <div><dt>Charging</dt><dd>USB&#8209;C</dd></div>
+            <div><dt>Reported telemetry</dt><dd>Voltage, charge state</dd></div>
+            <!-- EDIT-ME SPECS - the two most-asked questions on any battery
+                 device. Worth filling in before launch:
+            <div><dt>Battery life</dt><dd>? days typical</dd></div>
+            <div><dt>Charge time</dt><dd>? h</dd></div>
+            -->
+          </dl>
+        </div>
+
+        <div class="spec-group">
+          <h3>Connectivity &amp; storage</h3>
+          <dl>
+            <div><dt>Wireless</dt><dd>Wi&#8209;Fi, Bluetooth</dd></div>
+            <div><dt>Mesh</dt><dd>ESPNow&reg;</dd></div>
+            <div><dt>Wired</dt><dd>USB&#8209;C</dd></div>
+            <div><dt>Logging</dt><dd>microSD card</dd></div>
+            <div><dt>Server</dt><dd>Self&#8209;hosted, optional</dd></div>
+            <!-- EDIT-ME SPECS:
+            <div><dt>Wi-Fi standard</dt><dd>802.11 ?</dd></div>
+            <div><dt>microSD capacity</dt><dd>up to ? GB</dd></div>
+            <div><dt>Mesh range</dt><dd>? m line of sight</dd></div>
+            -->
+          </dl>
+        </div>
+
+        <!-- EDIT-ME SPECS - physical dimensions. Add once measured:
+        <div class="spec-group">
+          <h3>Physical</h3>
+          <dl>
+            <div><dt>Dimensions</dt><dd>? &times; ? &times; ? mm</dd></div>
+            <div><dt>Weight</dt><dd>? g</dd></div>
+            <div><dt>Enclosure</dt><dd>Soft-touch, user-openable</dd></div>
+            <div><dt>Operating range</dt><dd>? to ? &deg;C</dd></div>
+          </dl>
+        </div>
+        -->
+      </div>
+
+      <div>
+        <div class="spec-group">
+          <h3>Particulates</h3>
+          <dl>
+            <div><dt>Mass concentration</dt><dd>PM<sub>1.0</sub> &middot; PM<sub>2.5</sub> &middot; PM<sub>4.0</sub> &middot; PM<sub>10</sub></dd></div>
+            <div><dt>Number concentration</dt><dd>PM<sub>0.5</sub> &middot; PM<sub>1.0</sub> &middot; PM<sub>2.5</sub> &middot; PM<sub>4.0</sub> &middot; PM<sub>10</sub></dd></div>
+            <div><dt>Typical particle size</dt><dd>Reported</dd></div>
+            <div><dt>Method</dt><dd>Dual&#8209;laser scattering</dd></div>
+            <!-- EDIT-ME SPECS:
+            <div><dt>Range</dt><dd>0 to ? &micro;g/m&sup3;</dd></div>
+            <div><dt>Accuracy</dt><dd>&plusmn;? &micro;g/m&sup3;</dd></div>
+            -->
+          </dl>
+        </div>
+
+        <div class="spec-group">
+          <h3>Air &amp; climate</h3>
+          <dl>
+            <div><dt>Carbon dioxide</dt><dd>ppm, NDIR</dd></div>
+            <div><dt>Temperature</dt><dd>&deg;C / &deg;F</dd></div>
+            <div><dt>Relative humidity</dt><dd>%RH</dd></div>
+            <div><dt>Barometric pressure</dt><dd>kPa / inHg</dd></div>
+            <!-- EDIT-ME SPECS:
+            <div><dt>CO2 range</dt><dd>? to ? ppm</dd></div>
+            <div><dt>CO2 accuracy</dt><dd>&plusmn;? ppm</dd></div>
+            <div><dt>Temp accuracy</dt><dd>&plusmn;? &deg;C</dd></div>
+            <div><dt>RH accuracy</dt><dd>&plusmn;? %RH</dd></div>
+            -->
+          </dl>
+        </div>
+
+        <div class="spec-group">
+          <h3>Light</h3>
+          <dl>
+            <div><dt>Ultraviolet</dt><dd>UV&#8209;B, 240&ndash;320 nm</dd></div>
+            <div><dt>Ambient light</dt><dd>Luminosity</dd></div>
+          </dl>
+        </div>
+
+        <div class="spec-group">
+          <h3>On screen</h3>
+          <dl>
+            <div><dt>History</dt><dd>24 h per reading</dd></div>
+            <div><dt>Layouts</dt><dd>User configurable</dd></div>
+            <div><dt>Units</dt><dd>Metric or imperial</dd></div>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <p class="spec-note">Sensor modules sourced from Switzerland, Germany, Korea and Canada. Every one of them is a replaceable part.</p>
+  </div>
+</section>
+
+<!-- ========================= TESTIMONIALS ========================= -->
+<section class="section" aria-labelledby="quotes-h">
+  <div class="wrap">
+    <div class="carousel-head carousel-head--center reveal">
+      <div class="section-head" style="margin-bottom:0">
+        <p class="eyebrow">Early users</p>
+        <h2 id="quotes-h">Tested in real rooms.</h2>
+        <p class="lede">Founders, operators and educators who put a Canary on their desk before we had a website to put it on.</p>
+      </div>
+      <div class="carousel-nav">
+        <button type="button" data-rail-prev="quoteRail" aria-controls="quoteRail"><span class="visually-hidden">Previous quote</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button type="button" data-rail-next="quoteRail" aria-controls="quoteRail"><span class="visually-hidden">Next quote</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rail" id="quoteRail" data-rail tabindex="0" role="region" aria-label="What early users say — scrollable quotes">
+      <figure class="quote reveal">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>Canary is a game-changer for executive health, keeping my air clean and my focus sharp during long investment strategy sessions at the office.</blockquote>
+        <figcaption><cite>Avital Aronov</cite><span>Founder, Prime AI Growth Office</span></figcaption>
+      </figure>
+
+      <figure class="quote reveal d1">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>As a high-growth tech operation, keeping our team's workspace healthy is critical, and Canary ensures our indoor air quality matches our high performance.</blockquote>
+        <figcaption><cite>Mikhail Pivovar</cite><span>CEO, Routey OS</span></figcaption>
+      </figure>
+
+      <figure class="quote reveal d2">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>Developing global hardware partnerships requires endless travel and long boardroom hours; Canary keeps my immediate breathing space healthy wherever I land.</blockquote>
+        <figcaption><cite>Konstantin Benkovskiy</cite><span>CEO, BenKo</span></figcaption>
+      </figure>
+
+      <figure class="quote reveal">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>In our educational workshops, a healthy environment is the foundation for learning, and Canary helps us ensure our spaces promote peak cognitive focus.</blockquote>
+        <figcaption><cite>Nicole Cummings-Morgan</cite><span>Founder, W1derus Educational Workshops Inc.</span></figcaption>
+      </figure>
+
+      <figure class="quote reveal d1">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>Hosting community events and collaborative wellness workshops means prioritizing guest safety; Canary gives us visual assurance of clean, safe indoor air.</blockquote>
+        <figcaption><cite>Triana Shaw</cite><span>CEO, The Atlas Connective</span></figcaption>
+      </figure>
+
+      <figure class="quote reveal d2">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>As a technical founder constantly working around server racks and development hardware, Canary is essential for keeping my lab environment healthy.</blockquote>
+        <figcaption><cite>Reza Ghochkhani</cite><span>Founder, HADHOX</span></figcaption>
+      </figure>
+  </div>
+</section>
+
+<!-- ======================== ORGANIZATIONS ========================= -->
+<section class="section dark" id="organizations">
+  <div class="wrap">
+    <div class="split">
+      <div class="split-body reveal">
+        <p class="eyebrow eyebrow--dark">Canary for organizations</p>
+        <h2>One room, or two hundred.</h2>
+        <p class="lede lede--dark">Canary units find each other over ESPNow&reg; and form their own mesh &mdash; no site&#8209;wide WiFi rollout, no per&#8209;device provisioning. Readings land on a server you host, on your own network, behind your own door.</p>
+        <ul class="point-list">
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="4" cy="6" r="1.8"/><circle cx="20" cy="6" r="1.8"/><circle cx="4" cy="18" r="1.8"/><circle cx="20" cy="18" r="1.8"/><path d="M5.4 7.1L10.3 10.7M18.6 7.1L13.7 10.7M5.4 16.9L10.3 13.3M18.6 16.9L13.7 13.3"/></svg>
+            <div><b>Mesh networking</b><p>Units relay for each other across floors and outbuildings where WiFi does not reach.</p></div>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.6l7.5 3v6c0 4.6-3.1 8.4-7.5 9.8-4.4-1.4-7.5-5.2-7.5-9.8v-6z"/><path d="M9.3 12.2l1.9 1.9 3.6-3.9"/></svg>
+            <div><b>Privacy-first by architecture</b><p>Nothing leaves the building unless you route it there. Straightforward when the rooms are classrooms.</p></div>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V8.6l8-5 8 5V20"/><path d="M4 20h16"/><path d="M9.5 20v-5h5v5"/><path d="M8 11h1.5M14.5 11H16"/></svg>
+            <div><b>HVAC that answers to evidence</b><p>Find the meeting room that never clears, the wing the air handler forgot, the hour your filters stop coping.</p></div>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.6L1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.2M12 17.3h.01"/></svg>
+            <div><b>Campus-wide smoke alerting</b><p>When wildfire smoke reaches the property line, every unit knows &mdash; and so does whoever decides about outdoor break.</p></div>
+          </li>
+        </ul>
+        <div class="ent-stat">
+          <div><b>ESPNow&reg;</b><span>Device-to-device mesh</span></div>
+          <div><b>Self-hosted</b><span>Your server, your network</span></div>
+          <div><b>microSD</b><span>Local logging per unit</span></div>
+        </div>
+        <p style="margin-top:var(--s-7)">
+          <a class="btn btn--ghost" href="#waitlist">
+            Talk to us about a deployment
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </p>
+      </div>
+      <div class="split-media reveal d1">
+        <picture>
+          <source type="image/webp" sizes="(min-width:900px) 46vw, 92vw" srcset="assets/img/dashboard-1000.webp 1000w, assets/img/dashboard-1600.webp 1600w">
+          <img src="assets/img/dashboard-1000.jpg" width="1920" height="1130" loading="lazy" decoding="async"
+               sizes="(min-width:900px) 46vw, 92vw"
+               srcset="assets/img/dashboard-1000.jpg 1000w, assets/img/dashboard-1600.jpg 1600w"
+               alt="A self-hosted Canary dashboard plotting pressure, carbon dioxide and humidity together across two days, with toggles for voltage, luminosity, UV-B, particulate sizes and radios."
+               style="background:#fff">
+        </picture>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== PRICING ============================ -->
+<section class="section band" id="pricing">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Founding batch</p>
+      <h2>First units, first price.</h2>
+      <p class="lede">The founding batch is small and hand-checked. Waitlist members get early-bird pricing and the first shipping slots.</p>
+    </div>
+
+    <div class="price-card reveal">
+      <div class="price-top">
+        <strong>Canary &mdash; founding batch</strong>
+        <!-- EDIT-ME DATE -->
+        <span class="price-badge">Ships Fall 2026</span>
+      </div>
+      <div class="price-body">
+        <!-- ==================================================== -->
+        <!-- EDIT-ME PRICE — replace $XXX (early bird) and $YYY    -->
+        <!-- (regular). Update the saving badge to match, or       -->
+        <!-- delete the .price-was and .price-save spans if you    -->
+        <!-- would rather not show a strikethrough.                -->
+        <!-- ==================================================== -->
+        <div class="price-figure">
+          <span class="price-now mono">$249</span>
+          <span class="price-was mono">$299</span>
+          <span class="price-save">Waitlist price</span>
+        </div>
+
+        <ul class="price-list">
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+            <span>Canary monitor, soft-touch enclosure, USB&#8209;C cable and microSD card</span>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+            <span>All seven sensors &mdash; nothing behind a paywall or a firmware tier</span>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+            <span>Replacement parts and schematics available from day one</span>
+          </li>
+          <li>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
+            <span>Self-hosted server software, free and unlimited</span>
+          </li>
+        </ul>
+
+        <a class="btn" href="#waitlist" style="width:100%">Join the waitlist for this price</a>
+        <p class="price-fine">Joining the waitlist does not charge you anything and does not commit you to buying.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================== WAITLIST ============================ -->
+<section class="section dark waitlist" id="waitlist">
+  <div class="wrap">
+    <div class="reveal">
+      <p class="eyebrow eyebrow--dark">The waitlist</p>
+      <h2>Be first in line.</h2>
+      <p class="lede lede--dark">Leave your email and we will tell you once &mdash; when the founding batch opens, with your early-bird price attached. That is the entire mailing list.</p>
+    </div>
+
+    <form class="hero-form reveal d1" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" data-waitlist novalidate>
+      <!-- EDIT-ME FORMSPREE ID (above) -->
+      <label class="visually-hidden" for="email-main">Email address</label>
+      <div class="field-row">
+        <input id="email-main" type="email" name="email" required autocomplete="email"
+               inputmode="email" placeholder="you@example.com" aria-describedby="note-main">
+        <button class="btn" type="submit">
+          <span data-label>Join the waitlist</span>
+        </button>
+      </div>
+      <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <input type="hidden" name="_subject" value="Canary waitlist signup">
+      <input type="hidden" name="source" value="main">
+      <p class="form-note" id="note-main">One email at launch. No newsletter, no partners, no resale. Unsubscribe is a link in the same email.</p>
+      <p class="form-status" role="status" aria-live="polite"></p>
+    </form>
+  </div>
+</section>
+
+<!-- ============================= FAQ ============================== -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <p class="eyebrow">Before you ask</p>
+      <h2>Questions, answered.</h2>
+    </div>
+
+    <div class="faq reveal">
+      <details>
+        <summary><span>What does Canary measure?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>Fine particulate matter (PM<sub>2.5</sub>, and coarser and finer fractions), carbon dioxide, UV&#8209;B, temperature, relative humidity and ambient pressure. Particulates are the tiny airborne particles produced by wildfire smoke, traffic, wood burning and cooking, and they are one of the most important indicators of air quality.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Why does PM<sub>2.5</sub> matter?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>PM<sub>2.5</sub> particles are roughly 30 times smaller than the width of a human hair. Because they are so small they can be inhaled deep into the lungs, and may affect everyone &mdash; especially children, older adults, and people with asthma or other respiratory conditions.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Can Canary detect wildfire smoke?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>Yes. Wildfire smoke is largely made up of fine particulate matter, which is exactly what Canary is built to monitor. During wildfire season it helps you understand how much smoke is making its way indoors, so you can act when it does.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Why monitor indoor air when I can check the forecast?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>Most people spend around 90% of their time indoors, and outdoor air quality reports cannot tell you what is happening inside your home. Indoor air varies enormously with ventilation, filtration, cooking, candles, fireplaces, and whether smoke is getting into the building.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Is it suitable for a nursery?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>Yes, and it is one of the most common places people put one. There is no backlight and no sound by default, so it will not disturb a sleeping child while it tracks the room overnight.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Does Canary clean the air?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>No. Canary measures air quality; it does not filter it. Think of it as the information that tells you when to run the purifier, open a window, or change an HVAC filter &mdash; and, just as usefully, when you do not need to.</p></div>
+      </details>
+
+      <details>
+        <summary><span>How accurate is it?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>Canary uses high-quality sensor modules built for continuous monitoring. No consumer monitor is intended to replace laboratory equipment, and we will not claim otherwise &mdash; but Canary gives reliable, consistent measurements that let you track how your air changes over time, which is what actually drives decisions.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Where should I put it?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>In the room where you spend the most time &mdash; a living room, bedroom or nursery. Avoid placing it right beside a window, a vent, the stove or a humidifier, since those will skew the readings locally rather than tell you about the room.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Will cooking set it off?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>It will show it, and that is the point. Frying, grilling and high-heat cooking produce a lot of PM<sub>2.5</sub>. Most people are genuinely surprised to find that making dinner can briefly push indoor particle levels past what is outside during a pollution event.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Is this only useful during wildfire season?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>Plenty of people buy one because of smoke and then keep using it year-round. Indoor air shifts constantly with cooking, wood-burning stoves, seasonal allergens, renovations, and how tightly the house is shut against the weather.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Do I need to be technical to use it?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>No. Out of the box you place it somewhere and read the screen. The mesh networking, self-hosted server and custom screen layouts are there if you want them, and entirely ignorable if you do not.</p></div>
+      </details>
+
+      <details>
+        <summary><span>What happens when I join the waitlist?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>We store your email address and use it once, to tell you the founding batch is open, with your early-bird price. No newsletter, no sharing with anyone else, and an unsubscribe link in the same email. Joining costs nothing and commits you to nothing.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============================ FOOTER ============================ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <a class="brand" href="#top" style="justify-self:start; margin-left:-.35rem" aria-label="Canary — back to top">
+          <svg viewBox="135 23 125 93" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="overflow:visible; width:42px">
+            <path fill="none" stroke="var(--cream)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d="m 185.28631,85.449901 c 0.53981,-4.739076 3.10759,-11.309465 7.85844,-15.242635 6.52824,-5.40464 15.77441,-6.387205 23.66324,-8.386515 5.00851,-1.26934 12.50459,-5.354226 14.99126,-6.562898 1.8823,1.420138 -2.72461,33.867042 -16.73187,39.590572 -6.01541,2.457965 -13.43565,1.040776 -19.38442,-0.435638 -1.12747,-0.279824 -6.55337,-2.503756 -6.47924,-0.710766 0.0398,0.962277 6.06003,2.400837 7.25956,2.685477 7.38681,1.642832 14.03814,1.572882 21.40304,-0.521801 15.0143,-4.27029 22.21028,-19.516716 25.59988,-33.672266 1.14869,-4.79712 1.27228,-10.151599 2.47816,-14.915109 0.73637,-2.90881 1.71572,-5.395932 3.85031,-7.529462 1.23336,-1.23275 2.79988,-2.538041 4.34476,-3.267113 3.14908,-1.486146 3.28012,-1.906641 0.51541,-2.474151 -3.83753,-0.787727 -4.79503,-0.498528 -7.12064,-1.667071 -6.36902,-3.2002 -11.1764,-6.954139 -18.65481,-6.422649 -9.06366,0.64416 -17.6416,7.649078 -24.25034,13.322308 -15.34967,13.17684 -28.83442,28.439963 -42.13003,43.637753 -6.74483,7.70981 -13.19973,15.280623 -19.60725,23.273943 -1.54631,1.929 -2.87688,3.55362 -4.58545,5.58254 -0.643,0.76355 -1.56438,2.43374 -0.64515,2.9956 1.24622,0.76173 14.54767,-8.94105 19.82505,-12.16023 6.22971,-3.86317 13.04786,-7.2563 19.94447,-9.76933 9.32262,-3.39703 18.68446,-5.380027 27.50726,-10.052607 6.56233,-3.47543 13.23832,-8.245034 17.65457,-14.495866"/>
+          </svg>
+          <span class="brand-word">Canary</span>
+        </a>
+        <p style="color:var(--muted-dark); font-size:.95rem; margin-top:var(--s-4); max-width:34ch">
+          A pocketable environmental monitor for people who would rather know.
+        </p>
+      </div>
+
+      <div>
+        <h3>Product</h3>
+        <ul>
+          <li><a href="#product">The device</a></li>
+          <li><a href="#sensors">Sensors</a></li>
+          <li><a href="#specs">Specifications</a></li>
+          <li><a href="#repair">Right to repair</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <h3>More</h3>
+        <ul>
+          <li><a href="#organizations">For organizations</a></li>
+          <li><a href="#waitlist">Join the waitlist</a></li>
+          <li><a href="https://goaqs.org" rel="noopener">goaqs.org</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; <span id="year">2026</span> BURD Inc. All rights reserved.</span>
+      <div class="social">
+        <a href="https://x.com/" rel="noopener" aria-label="Canary on X">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.1l-6.8 7.7L21.8 21h-6.2l-4.9-6.3L5.1 21H2l7.2-8.2L2.4 3h6.4l4.4 5.8L17.5 3zm-1.1 16.1h1.7L7.7 4.8H5.9l10.5 14.3z"/></svg>
+        </a>
+        <a href="https://instagram.com/" rel="noopener" aria-label="Canary on Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* ---------- year ---------- */
+  document.getElementById("year").textContent = new Date().getFullYear();
+
+  /* ---------- mobile menu ---------- */
+  var menu = document.getElementById("mobileMenu");
+  var openBtn = document.getElementById("menuOpen");
+  var closeBtn = document.getElementById("menuClose");
+
+  function setMenu(open){
+    menu.dataset.open = String(open);
+    openBtn.setAttribute("aria-expanded", String(open));
+    document.body.style.overflow = open ? "hidden" : "";
+    if(open){ closeBtn.focus(); } else { openBtn.focus(); }
+  }
+  openBtn.addEventListener("click", function(){ setMenu(true); });
+  closeBtn.addEventListener("click", function(){ setMenu(false); });
+  menu.addEventListener("click", function(e){
+    if(e.target.tagName === "A"){ setMenu(false); }
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && menu.dataset.open === "true"){ setMenu(false); }
+  });
+  /* keep focus inside the open menu */
+  menu.addEventListener("keydown", function(e){
+    if(e.key !== "Tab" || menu.dataset.open !== "true") return;
+    var f = menu.querySelectorAll("a[href], button");
+    if(!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- waitlist forms ---------- */
+  document.querySelectorAll("form[data-waitlist]").forEach(function(form){
+    var input  = form.querySelector('input[type="email"]');
+    var btn    = form.querySelector('button[type="submit"]');
+    var label  = btn.querySelector("[data-label]");
+    var status = form.querySelector(".form-status");
+    var idle   = label.textContent;
+
+    function say(msg, tone){
+      status.textContent = msg;
+      if(tone){ status.dataset.tone = tone; } else { delete status.dataset.tone; }
+    }
+    function busy(on){
+      btn.disabled = on;
+      label.textContent = on ? "Sending" : idle;
+      var sp = btn.querySelector(".spinner");
+      if(on && !sp){
+        sp = document.createElement("span");
+        sp.className = "spinner";
+        sp.setAttribute("aria-hidden","true");
+        btn.insertBefore(sp, label);
+      } else if(!on && sp){ sp.remove(); }
+    }
+
+    input.addEventListener("input", function(){
+      if(status.textContent){ say(""); }
+      input.setAttribute("aria-invalid","false");
+    });
+
+    form.addEventListener("submit", function(e){
+      var action = form.getAttribute("action") || "";
+
+      /* Not wired up yet — say so plainly instead of failing silently. */
+      if(action.indexOf("YOUR_FORM_ID") !== -1){
+        e.preventDefault();
+        say("This form is not connected yet — add your Formspree ID in index.html.", "err");
+        return;
+      }
+      if(!input.value || !input.checkValidity()){
+        e.preventDefault();
+        input.setAttribute("aria-invalid","true");
+        say("Please enter a valid email address.", "err");
+        input.focus();
+        return;
+      }
+      /* fetch submit so the page never navigates away */
+      e.preventDefault();
+      busy(true);
+      say("");
+      fetch(action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" }
+      }).then(function(res){
+        if(res.ok){
+          form.querySelector(".field-row").style.display = "none";
+          var note = form.querySelector(".form-note");
+          if(note){ note.style.display = "none"; }
+          say("You are on the list. We will email you once, when the founding batch opens.", "ok");
+        } else {
+          return res.json().then(function(d){
+            throw new Error((d.errors && d.errors[0] && d.errors[0].message) || "Something went wrong.");
+          });
+        }
+      }).catch(function(err){
+        busy(false);
+        say(err.message + " Please try again, or email us directly.", "err");
+      });
+    });
+  });
+
+  /* ---------- carousels ---------- */
+  document.querySelectorAll("[data-rail]").forEach(function(rail){
+    var prev = document.querySelector('[data-rail-prev="' + rail.id + '"]');
+    var next = document.querySelector('[data-rail-next="' + rail.id + '"]');
+    if(!prev || !next) return;
+
+    function step(){
+      var item = rail.firstElementChild;
+      if(!item) return 320;
+      var gap = parseFloat(getComputedStyle(rail).columnGap) || 16;
+      return item.getBoundingClientRect().width + gap;
+    }
+    function syncNav(){
+      var first = rail.firstElementChild, last = rail.lastElementChild;
+      if(!first || !last) return;
+      var cs = getComputedStyle(rail);
+      var padL = parseFloat(cs.paddingLeft) || 0;
+      var padR = parseFloat(cs.paddingRight) || 0;
+      var rr = rail.getBoundingClientRect();
+      var atStart = first.getBoundingClientRect().left >= rr.left + padL - 2;
+      var atEnd   = last.getBoundingClientRect().right <= rr.right - padR + 2;
+      prev.disabled = atStart;
+      next.disabled = atEnd;
+      /* everything already fits: hide the controls rather than show two
+         permanently dead buttons */
+      prev.parentNode.style.visibility = (atStart && atEnd) ? "hidden" : "";
+    }
+    function go(dir){
+      rail.scrollBy({ left: dir * step(), behavior: reduce.matches ? "auto" : "smooth" });
+    }
+    prev.addEventListener("click", function(){ go(-1); });
+    next.addEventListener("click", function(){ go(1); });
+    rail.addEventListener("scroll", function(){ window.requestAnimationFrame(syncNav); }, { passive:true });
+    window.addEventListener("resize", syncNav, { passive:true });
+    syncNav();
+  });
+
+  /* ---------- 3D sensor fan ---------- */
+  document.querySelectorAll("[data-fan]").forEach(function(stage){
+    var items  = [].slice.call(stage.querySelectorAll("[data-fan-item]"));
+    var caps   = [].slice.call(stage.querySelectorAll("[data-fan-cap]"));
+    var dots   = [].slice.call(stage.querySelectorAll("[data-fan-dot]"));
+    var prev   = stage.querySelector("[data-fan-prev]");
+    var next   = stage.querySelector("[data-fan-next]");
+    var play   = stage.querySelector("[data-fan-play]");
+    var pLabel = stage.querySelector("[data-fan-play-label]");
+    var iPause = stage.querySelector("[data-fan-icon-pause]");
+    var iPlay  = stage.querySelector("[data-fan-icon-play]");
+    var status = stage.querySelector("[data-fan-status]");
+    var n = items.length;
+    if(!n) return;
+
+    var active = 0, timer = null, userPaused = false, visible = false;
+    var DELAY = 4500;
+
+    function offsetOf(i){
+      var o = ((i - active) % n + n) % n;
+      return o >= n / 2 ? o - n : o;   /* tie breaks left, keeps the fan even */
+    }
+    /* how many cards to show either side of centre */
+    var maxVis = n >= 7 ? 3 : (n >= 5 ? 2 : 1);
+    function layout(){
+      var wide = window.innerWidth >= 900;
+      var stepX = wide ? 60 : 46;      /* % of card width           */
+      var stepZ = wide ? 150 : 90;     /* px pushed back per step   */
+      var stepR = wide ? 32 : 26;      /* deg of turn per step      */
+      items.forEach(function(el, i){
+        var o = offsetOf(i);
+        var far = Math.abs(o) > maxVis;
+        el.style.transform =
+          "translateX(" + (o * stepX) + "%) " +
+          "translateZ(" + (-Math.abs(o) * stepZ) + "px) " +
+          "rotateY(" + (o * -stepR) + "deg) " +
+          "scale(" + (o === 0 ? 1 : 0.94) + ")";
+        el.style.opacity = far ? 0 : (o === 0 ? 1 : 0.55);
+        el.style.zIndex  = String(100 - Math.abs(o) * 10);
+        el.style.filter  = o === 0 ? "none" : "saturate(.85) brightness(.94)";
+        el.style.pointerEvents = far ? "none" : "auto";
+        el.style.cursor = o === 0 ? "default" : "pointer";
+        el.setAttribute("aria-hidden", o === 0 ? "false" : "true");
+      });
+    }
+    function show(i, announce){
+      active = ((i % n) + n) % n;
+      layout();
+      caps.forEach(function(c, k){
+        if(k === active){ c.setAttribute("data-active",""); }
+        else { c.removeAttribute("data-active"); }
+      });
+      dots.forEach(function(d, k){ d.setAttribute("aria-current", k === active ? "true" : "false"); });
+      if(announce && status){
+        var tag = caps[active].querySelector(".sensor-tag");
+        status.textContent = (active + 1) + " of " + n + ": " + (tag ? tag.textContent : "");
+      }
+    }
+    function stop(){ if(timer){ window.clearInterval(timer); timer = null; } }
+    function start(){
+      stop();
+      if(userPaused || reduce.matches || !visible) return;
+      timer = window.setInterval(function(){ show(active + 1, false); }, DELAY);
+    }
+    function setPlay(paused){
+      userPaused = paused;
+      play.setAttribute("aria-pressed", String(paused));
+      pLabel.textContent = paused ? "Play the sensor carousel" : "Pause the sensor carousel";
+      iPause.style.display = paused ? "none" : "";
+      iPlay.style.display  = paused ? "" : "none";
+      paused ? stop() : start();
+    }
+
+    prev.addEventListener("click", function(){ show(active - 1, true); start(); });
+    next.addEventListener("click", function(){ show(active + 1, true); start(); });
+    dots.forEach(function(d, k){
+      d.addEventListener("click", function(){ show(k, true); start(); });
+    });
+    items.forEach(function(el, k){
+      el.addEventListener("click", function(){
+        if(k !== active){ show(k, true); start(); }
+      });
+    });
+    play.addEventListener("click", function(){ setPlay(!userPaused); });
+
+    /* pause while the pointer or keyboard focus is inside it */
+    stage.addEventListener("mouseenter", stop);
+    stage.addEventListener("mouseleave", start);
+    stage.addEventListener("focusin", stop);
+    stage.addEventListener("focusout", function(e){
+      if(!stage.contains(e.relatedTarget)) start();
+    });
+
+    /* arrow keys when focus is inside the carousel */
+    stage.addEventListener("keydown", function(e){
+      if(e.key === "ArrowLeft"){ e.preventDefault(); show(active - 1, true); }
+      else if(e.key === "ArrowRight"){ e.preventDefault(); show(active + 1, true); }
+    });
+
+    /* swipe / drag */
+    var dragX = null;
+    stage.addEventListener("pointerdown", function(e){ dragX = e.clientX; });
+    stage.addEventListener("pointerup", function(e){
+      if(dragX === null) return;
+      var dx = e.clientX - dragX; dragX = null;
+      if(Math.abs(dx) > 40){ show(active + (dx < 0 ? 1 : -1), true); start(); }
+    });
+    stage.addEventListener("pointercancel", function(){ dragX = null; });
+
+    /* only animate while it is actually on screen */
+    if("IntersectionObserver" in window){
+      new IntersectionObserver(function(es){
+        visible = es[0].isIntersecting;
+        visible ? start() : stop();
+      }, { threshold: 0.25 }).observe(stage);
+    } else { visible = true; }
+
+    window.addEventListener("resize", layout, { passive:true });
+    reduce.addEventListener && reduce.addEventListener("change", function(){
+      reduce.matches ? stop() : start();
+      if(reduce.matches) setPlay(true);
+    });
+
+    show(0, false);
+    if(reduce.matches) setPlay(true);
+    start();
+  });
+
+  /* ---------- scroll reveal ---------- */
+  var targets = document.querySelectorAll(".reveal");
+  if(reduce.matches || !("IntersectionObserver" in window)){
+    targets.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+    targets.forEach(function(el){ io.observe(el); });
+    window.setTimeout(function(){
+      targets.forEach(function(el){
+        var r = el.getBoundingClientRect();
+        if(r.top < window.innerHeight && r.bottom > 0){ el.classList.add("in"); }
+      });
+    }, 1200);
+  }
+})();
+</script>
+</body>
+</html>
