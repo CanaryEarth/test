@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Canary — Know what you are breathing</title>
+<title>Canary: Know what you are breathing</title>
 <meta name="description" content="Canary is a pocketable environmental monitor with an e-paper display. Seven sensors, a full day of history at a glance, and no subscription. Join the founding-batch waitlist.">
 <meta name="theme-color" content="#F4F1EA">
-<meta property="og:title" content="Canary — Know what you are breathing">
+<meta property="og:title" content="Canary: Know what you are breathing">
 <meta property="og:description" content="A pocketable environmental monitor with an e-paper display. Seven sensors. A full day of history at a glance. No subscription.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="assets/img/hero-1600.jpg">
@@ -359,17 +359,6 @@ a{ color:inherit }
   display:block; margin-bottom:var(--s-2);
 }
 
-.also{
-  margin-top:var(--s-6); display:grid; gap:var(--s-4);
-  grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
-}
-.also div{
-  background:var(--paper); border:1px solid var(--line);
-  border-radius:var(--radius); padding:var(--s-5);
-}
-.also .ico{ width:26px; height:26px; color:var(--sage); margin-bottom:var(--s-3) }
-.also b{ font-family:var(--font-display); font-weight:700; display:block; letter-spacing:-.01em }
-.also p{ color:var(--muted); font-size:.94rem; margin-top:.25rem }
 
 /* --- carousel --------------------------------------------------- */
 .carousel-head{
@@ -414,73 +403,106 @@ a{ color:inherit }
 .card h3{ font-size:1.28rem; color:var(--cream) }
 .card p{ color:#D6DAD7; font-size:.94rem; margin-top:.3rem; line-height:1.45 }
 
-/* --- 3D device fan ---------------------------------------------- */
-.stage{
-  position:relative; perspective:1500px; perspective-origin:50% 46%;
-  margin-inline:auto; touch-action:pan-y;
+/* --- device carousel --------------------------------------------
+   One static device PNG with a transparent screen window; the readouts
+   sit behind it and slide. Window rectangle comes from
+   tools/build-devices.py, which measures it from the artwork.       */
+.device-stage{ margin-inline:auto }
+.device{
+  position:relative; width:min(100%, 720px); margin-inline:auto;
+  aspect-ratio:948/578;
+  filter:drop-shadow(0 18px 30px rgb(30 32 34 / .26));
 }
-.fan{
-  position:relative; list-style:none; margin:0 auto; padding:0;
-  transform-style:preserve-3d;
-  height:clamp(190px, 30vw, 330px);
+.device-window{
+  position:absolute;
+  left:11.9198%; top:7.2664%; width:84.3882%; height:83.0450%;
+  overflow:hidden; background:#fff; z-index:1;
 }
-.fan-item{ margin:0 }
-.js .fan-item{
-  position:absolute; top:0; left:50%;
-  width:clamp(230px, 40vw, 430px);
-  margin-left:calc(clamp(230px, 40vw, 430px) / -2);
-  transform-style:preserve-3d; will-change:transform, opacity;
-  transition:transform 720ms var(--ease), opacity 720ms var(--ease),
-             filter 720ms var(--ease);
+.device-screen{
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:fill; opacity:0; z-index:1;
+  transition:opacity 520ms var(--ease), transform 520ms var(--ease);
+  will-change:opacity, transform;
 }
-.fan-item img{
-  width:100%; height:auto; display:block;
-  filter:drop-shadow(0 22px 34px rgb(30 32 34 / .30));
+.device-screen[data-active]{ opacity:1; transform:none; z-index:2 }
+/* recessed panel edge */
+.device-well{
+  position:absolute; inset:0; z-index:3; pointer-events:none;
+  box-shadow:inset 0 1px 7px rgb(0 0 0 / .20);
 }
-/* without JS the devices simply stack as a normal responsive grid */
-.fan{ display:grid; gap:var(--s-5); grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); height:auto }
-.js .fan{ display:block; height:clamp(190px, 30vw, 330px) }
+.device-frame{
+  position:absolute; inset:0; width:100%; height:100%;
+  z-index:4; pointer-events:none;
+}
+/* no JS: show every readout as a plain grid instead of a dead device */
+.no-js-screens{ display:grid; gap:var(--s-4); grid-template-columns:repeat(auto-fit,minmax(260px,1fr)) }
+.js .no-js-screens{ display:none }
+.no-js-screens img{ border:1px solid var(--line); border-radius:8px }
+.js-only{ display:none }
+.js .js-only{ display:block }
 
-.fan-cap{ max-width:44rem; margin:clamp(var(--s-6),4vw,var(--s-7)) auto 0; text-align:center }
-.js .fan-cap{ display:none }
-.js .fan-cap[data-active]{ display:block; animation:capIn 460ms var(--ease) both }
-@keyframes capIn{ from{ opacity:0; transform:translateY(8px) } to{ opacity:1; transform:none } }
-.fan-cap .sensor-tag{ margin-bottom:var(--s-2) }
-.fan-cap p{ color:var(--muted); margin-top:var(--s-3) }
-
-.fan-controls{
-  display:flex; align-items:center; justify-content:center; gap:var(--s-3);
-  margin-top:clamp(var(--s-5),3vw,var(--s-6));
+.rd-caps{ max-width:44rem; margin:clamp(var(--s-6),4vw,var(--s-7)) auto 0 }
+/* one grid cell holds every caption, so its height is the tallest of them
+   and the controls below never jump between readouts */
+.js .rd-caps{ display:grid }
+.rd-cap{ text-align:center }
+.js .rd-cap{
+  grid-area:1 / 1; opacity:0; visibility:hidden; transform:translateY(8px);
+  transition:opacity 420ms var(--ease), transform 420ms var(--ease),
+             visibility 0s linear 420ms;
 }
-.fan-dots{ display:flex; gap:var(--s-2); align-items:center }
-.fan-dots button{
-  width:32px; height:32px; padding:0; border:0; background:transparent;
+.js .rd-cap[data-active]{
+  opacity:1; visibility:visible; transform:none; transition-delay:0s;
+}
+.rd-cap .sensor-tag{ margin-bottom:var(--s-2) }
+.rd-cap p{ color:var(--muted); margin-top:var(--s-3) }
+
+.rd-controls{ display:none }
+.js .rd-controls{
+  display:flex; align-items:center; justify-content:center; gap:var(--s-2);
+  margin-top:clamp(var(--s-5),3vw,var(--s-6)); flex-wrap:wrap;
+}
+@media (min-width:560px){ .js .rd-controls{ gap:var(--s-3) } }
+.rd-dots{ display:flex; gap:0; align-items:center }
+.rd-dots button{
+  width:30px; height:32px; padding:0; border:0; background:transparent;
   cursor:pointer; display:inline-grid; place-items:center; border-radius:50%;
 }
-.fan-dots button::after{
+.rd-dots button::after{
   content:""; width:8px; height:8px; border-radius:50%;
   background:var(--line); border:1px solid #B5AD9A;
   transition:background var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
-.fan-dots button[aria-current="true"]::after{
+.rd-dots button[aria-current="true"]::after{
   background:var(--ink); border-color:var(--ink); transform:scale(1.35);
 }
-.fan-dots button:hover::after{ background:var(--muted) }
+.rd-dots button:hover::after{ background:var(--muted) }
+.rd-count{
+  display:none; font-family:var(--font-mono); font-size:.82rem; font-weight:700;
+  font-variant-numeric:tabular-nums; color:var(--muted);
+  min-width:4.5ch; text-align:center;
+}
+/* eight dots plus three 46px buttons cannot fit a 335px row without going
+   under the 24px target minimum, so show a counter instead */
+@media (max-width:519px){
+  .rd-dots{ display:none }
+  .js .rd-count{ display:block }
+}
 
 /* --- spec table ------------------------------------------------- */
-.spec-cols{ display:grid; gap:var(--s-7) }
-@media (min-width:860px){ .spec-cols{ grid-template-columns:repeat(2,1fr); gap:var(--s-7) var(--s-8) } }
-.spec-group + .spec-group{ margin-top:var(--s-6) }
-.spec-group h3{
-  font-family:var(--font-mono); font-size:.72rem; font-weight:700;
-  letter-spacing:.16em; text-transform:uppercase; color:var(--sage);
-  padding-bottom:var(--s-3); border-bottom:1.5px solid var(--ink); margin-bottom:var(--s-1);
+.spec-cols{ display:grid; gap:0 }
+@media (min-width:860px){ .spec-cols{ grid-template-columns:repeat(2,1fr); gap:0 var(--s-8) } }
+.spec-group dl{ margin:0; padding:0 var(--s-2) var(--s-5) }
+/* keeps the mobile default from flashing open before the script runs;
+   removed the moment JS marks the group ready */
+@media (max-width:859px){
+  .js [data-spec-groups]:not([data-ready]) details:not([data-open-mobile]) > :not(summary){ display:none }
 }
-.spec-group dl{ margin:0 }
 .spec-group dl > div{
   display:flex; gap:var(--s-5); justify-content:space-between; align-items:baseline;
-  padding:.7rem 0; border-bottom:1px solid var(--line);
+  padding:.6rem 0; border-bottom:1px solid var(--line);
 }
+.spec-group dl > div:last-child{ border-bottom:0 }
 .spec-group dt{
   font-family:var(--font-display); font-size:.92rem; font-weight:600;
   color:var(--muted); flex:0 1 auto;
@@ -560,24 +582,30 @@ a{ color:inherit }
 .waitlist .lede{ margin-inline:auto; margin-bottom:var(--s-6) }
 .waitlist .hero-form{ max-width:36rem }
 
-/* --- FAQ -------------------------------------------------------- */
-.faq{ max-width:48rem; margin-inline:auto; border-top:1px solid var(--line) }
-.faq details{ border-bottom:1px solid var(--line) }
-.faq summary{
+/* --- disclosure (shared by the spec groups and the FAQ) ---------- */
+.disclosure{ border-top:1px solid var(--line) }
+.disclosure > details{ border-bottom:1px solid var(--line) }
+.disclosure summary{
   display:flex; align-items:center; justify-content:space-between; gap:var(--s-4);
   padding:var(--s-5) var(--s-2); cursor:pointer; list-style:none;
   font-family:var(--font-display); font-weight:700; font-size:1.06rem;
   letter-spacing:-.01em; min-height:56px;
   transition:color var(--dur) var(--ease);
 }
-.faq summary::-webkit-details-marker{ display:none }
-.faq summary > span{ flex:1 1 auto; min-width:0 }
-.faq summary:hover{ color:var(--sage) }
-.faq summary .chev{
+.disclosure summary::-webkit-details-marker{ display:none }
+.disclosure summary > span,
+.disclosure summary > h3{ flex:1 1 auto; min-width:0 }
+/* the label keeps its heading semantics but takes the summary's type */
+.disclosure summary > h3{ font:inherit; letter-spacing:inherit; color:inherit }
+.disclosure summary:hover{ color:var(--sage) }
+.disclosure summary .chev{
   width:20px; height:20px; flex:none; color:var(--muted);
   transition:transform var(--dur) var(--ease);
 }
-.faq details[open] summary .chev{ transform:rotate(180deg) }
+.disclosure > details[open] > summary .chev{ transform:rotate(180deg) }
+
+/* --- FAQ -------------------------------------------------------- */
+.faq{ max-width:48rem; margin-inline:auto }
 .faq-a{ padding:0 var(--s-2) var(--s-5); color:var(--muted); max-width:62ch }
 
 /* --- footer ----------------------------------------------------- */
@@ -646,7 +674,7 @@ a{ color:inherit }
 <div class="announce">
   <a href="#waitlist">
     <span class="announce-dot" aria-hidden="true"></span>
-    <span>Founding batch ships <em>Fall 2026</em> &mdash; waitlist members get early-bird pricing</span>
+    <span>Founding batch ships <em>Fall 2026</em>. Waitlist members get early-bird pricing</span>
     <svg class="announce-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
   </a>
 </div>
@@ -666,7 +694,7 @@ a{ color:inherit }
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
 
-    <a class="brand" href="#top" aria-label="Canary — home">
+    <a class="brand" href="#top" aria-label="Canary, home">
       <svg viewBox="135 23 125 93" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="overflow:visible">
         <path fill="none" stroke="var(--ink)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d="m 185.28631,85.449901 c 0.53981,-4.739076 3.10759,-11.309465 7.85844,-15.242635 6.52824,-5.40464 15.77441,-6.387205 23.66324,-8.386515 5.00851,-1.26934 12.50459,-5.354226 14.99126,-6.562898 1.8823,1.420138 -2.72461,33.867042 -16.73187,39.590572 -6.01541,2.457965 -13.43565,1.040776 -19.38442,-0.435638 -1.12747,-0.279824 -6.55337,-2.503756 -6.47924,-0.710766 0.0398,0.962277 6.06003,2.400837 7.25956,2.685477 7.38681,1.642832 14.03814,1.572882 21.40304,-0.521801 15.0143,-4.27029 22.21028,-19.516716 25.59988,-33.672266 1.14869,-4.79712 1.27228,-10.151599 2.47816,-14.915109 0.73637,-2.90881 1.71572,-5.395932 3.85031,-7.529462 1.23336,-1.23275 2.79988,-2.538041 4.34476,-3.267113 3.14908,-1.486146 3.28012,-1.906641 0.51541,-2.474151 -3.83753,-0.787727 -4.79503,-0.498528 -7.12064,-1.667071 -6.36902,-3.2002 -11.1764,-6.954139 -18.65481,-6.422649 -9.06366,0.64416 -17.6416,7.649078 -24.25034,13.322308 -15.34967,13.17684 -28.83442,28.439963 -42.13003,43.637753 -6.74483,7.70981 -13.19973,15.280623 -19.60725,23.273943 -1.54631,1.929 -2.87688,3.55362 -4.58545,5.58254 -0.643,0.76355 -1.56438,2.43374 -0.64515,2.9956 1.24622,0.76173 14.54767,-8.94105 19.82505,-12.16023 6.22971,-3.86317 13.04786,-7.2563 19.94447,-9.76933 9.32262,-3.39703 18.68446,-5.380027 27.50726,-10.052607 6.56233,-3.47543 13.23832,-8.245034 17.65457,-14.495866"/>
       </svg>
@@ -775,7 +803,7 @@ a{ color:inherit }
         <ul class="point-list">
           <li>
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l5-6 4 4 4-7 5 5"/><path d="M3 21h18"/></svg>
-            <div><b>24 hours on screen</b><p>Every sensor plots its own history, so you see the spike and what caused it &mdash; not just the number right now.</p></div>
+            <div><b>24 hours on screen</b><p>Every sensor plots its own history, so you see the spike and what caused it, not just the number right now.</p></div>
           </li>
           <li>
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16"/><path d="M12 9h5M12 13h5"/></svg>
@@ -801,125 +829,189 @@ a{ color:inherit }
     <div class="section-head reveal">
       <p class="eyebrow">Seven sensors</p>
       <h2>Every reading, plotted.</h2>
-      <p class="lede">Sensor modules sourced from Switzerland, Germany, Korea and Canada &mdash; each one drawing its own 24&#8209;hour trace on the e&#8209;paper screen.</p>
+      <p class="lede">Sensor modules sourced from Switzerland, Germany, Korea and Canada. Each one draws its own 24&#8209;hour trace on the e&#8209;paper screen.</p>
     </div>
 
-    <div class="stage reveal" data-fan
+    <div class="device-stage reveal" data-carousel
          role="group" aria-roledescription="carousel" aria-label="Canary sensor readouts">
-      <ul class="fan">
-        <li class="fan-item" data-fan-item="0">
-          <picture>
-            <source type="image/webp" sizes="(min-width:900px) 430px, 40vw"
-                    srcset="assets/img/dev-pm-560.webp 560w, assets/img/dev-pm-820.webp 820w">
-            <img src="assets/img/dev-pm-560.png" width="980" height="632"
-                 loading="lazy" decoding="async" sizes="(min-width:900px) 430px, 40vw"
-                 srcset="assets/img/dev-pm-560.png 560w, assets/img/dev-pm-820.png 820w"
-                 alt="A Canary showing particulate matter, with a tall smoke spike rising above the day&#39;s baseline.">
-          </picture>
-        </li>
-        <li class="fan-item" data-fan-item="1">
-          <picture>
-            <source type="image/webp" sizes="(min-width:900px) 430px, 40vw"
-                    srcset="assets/img/dev-co2-560.webp 560w, assets/img/dev-co2-820.webp 820w">
-            <img src="assets/img/dev-co2-560.png" width="980" height="632"
-                 loading="lazy" decoding="async" sizes="(min-width:900px) 430px, 40vw"
-                 srcset="assets/img/dev-co2-560.png 560w, assets/img/dev-co2-820.png 820w"
-                 alt="A Canary showing 889 ppm carbon dioxide, the overnight curve climbing then collapsing when a door opened.">
-          </picture>
-        </li>
-        <li class="fan-item" data-fan-item="2">
-          <picture>
-            <source type="image/webp" sizes="(min-width:900px) 430px, 40vw"
-                    srcset="assets/img/dev-temp-560.webp 560w, assets/img/dev-temp-820.webp 820w">
-            <img src="assets/img/dev-temp-560.png" width="980" height="632"
-                 loading="lazy" decoding="async" sizes="(min-width:900px) 430px, 40vw"
-                 srcset="assets/img/dev-temp-560.png 560w, assets/img/dev-temp-820.png 820w"
-                 alt="A Canary showing the temperature trace for the last day.">
-          </picture>
-        </li>
-        <li class="fan-item" data-fan-item="3">
-          <picture>
-            <source type="image/webp" sizes="(min-width:900px) 430px, 40vw"
-                    srcset="assets/img/dev-pressure-560.webp 560w, assets/img/dev-pressure-820.webp 820w">
-            <img src="assets/img/dev-pressure-560.png" width="980" height="632"
-                 loading="lazy" decoding="async" sizes="(min-width:900px) 430px, 40vw"
-                 srcset="assets/img/dev-pressure-560.png 560w, assets/img/dev-pressure-820.png 820w"
-                 alt="A Canary showing ambient pressure in kilopascals rising and falling across a day.">
-          </picture>
-        </li>
-      </ul>
 
-      <div class="fan-cap" data-fan-cap="0" data-active>
-        <span class="sensor-tag">Particulate matter</span>
-        <h3>It smells smoke before you do.</h3>
-        <p>A dual&#8209;laser sensor counts particles down to PM<sub>0.5</sub> &mdash; wildfire smoke, cooking fumes, wood burning, the dust from a renovation next door. These are the particles small enough to travel deep into your lungs, and the ones outdoor air quality reports cannot see inside your walls.</p>
-      </div>
-      <div class="fan-cap" data-fan-cap="1">
-        <span class="sensor-tag">Carbon dioxide</span>
-        <h3>Watch a closed room go stale.</h3>
-        <p>A Swiss laser&#8209;based CO<sub>2</sub> sensor, accurate enough to count how many people walked into a room. Rising CO<sub>2</sub> is the clearest signal that a space has stopped ventilating &mdash; and the reason a bedroom or a meeting room quietly drains your concentration.</p>
-      </div>
-      <div class="fan-cap" data-fan-cap="2">
-        <span class="sensor-tag">Temperature</span>
-        <h3>The microclimate your thermostat misses.</h3>
-        <p>Your hallway thermostat does not know what the nursery does at 4am, or how hot the conservatory gets by noon. Leave a Canary in the room that matters &mdash; or with the pets and plants you left at home.</p>
-      </div>
-      <div class="fan-cap" data-fan-cap="3">
-        <span class="sensor-tag">Ambient pressure</span>
-        <h3>Weather you can feel coming.</h3>
-        <p>A falling barometer arrives hours before the storm does &mdash; and often before the headache or the aching joint that comes with it. Canary keeps the curve, so a pattern you had only suspected becomes something you can actually point at.</p>
+      <div class="device js-only">
+        <div class="device-window">
+          <picture>
+            <source type="image/webp" sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-pm-420.webp 420w, assets/img/scr-pm-620.webp 620w, assets/img/scr-pm-900.webp 900w">
+            <img class="device-screen" data-slide="0" data-active src="assets/img/scr-pm-620.jpg"
+                 width="800" height="480" loading="lazy" decoding="async"
+                 sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-pm-420.jpg 420w, assets/img/scr-pm-620.jpg 620w, assets/img/scr-pm-900.jpg 900w"
+                 alt="Canary showing 2.5 PM10 with a day of particulate history, the fill shaded by particle size band.">
+          </picture>
+          <picture>
+            <source type="image/webp" sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-co2-420.webp 420w, assets/img/scr-co2-620.webp 620w, assets/img/scr-co2-900.webp 900w">
+            <img class="device-screen" data-slide="1" src="assets/img/scr-co2-620.jpg"
+                 width="800" height="480" loading="lazy" decoding="async"
+                 sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-co2-420.jpg 420w, assets/img/scr-co2-620.jpg 620w, assets/img/scr-co2-900.jpg 900w"
+                 alt="Canary showing 497 ppm carbon dioxide, the overnight curve climbing then dropping sharply at 05:00.">
+          </picture>
+          <picture>
+            <source type="image/webp" sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-temp-420.webp 420w, assets/img/scr-temp-620.webp 620w, assets/img/scr-temp-900.webp 900w">
+            <img class="device-screen" data-slide="2" src="assets/img/scr-temp-620.jpg"
+                 width="800" height="480" loading="lazy" decoding="async"
+                 sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-temp-420.jpg 420w, assets/img/scr-temp-620.jpg 620w, assets/img/scr-temp-900.jpg 900w"
+                 alt="Canary showing 26.5&deg;C beside a pinned note about wireless mice arriving tomorrow.">
+          </picture>
+          <picture>
+            <source type="image/webp" sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-humidity-420.webp 420w, assets/img/scr-humidity-620.webp 620w, assets/img/scr-humidity-900.webp 900w">
+            <img class="device-screen" data-slide="3" src="assets/img/scr-humidity-620.jpg"
+                 width="800" height="480" loading="lazy" decoding="async"
+                 sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-humidity-420.jpg 420w, assets/img/scr-humidity-620.jpg 620w, assets/img/scr-humidity-900.jpg 900w"
+                 alt="Canary showing 46.2% relative humidity with the day&rsquo;s curve rising from 43 to 61.">
+          </picture>
+          <picture>
+            <source type="image/webp" sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-pressure-420.webp 420w, assets/img/scr-pressure-620.webp 620w, assets/img/scr-pressure-900.webp 900w">
+            <img class="device-screen" data-slide="4" src="assets/img/scr-pressure-620.jpg"
+                 width="800" height="480" loading="lazy" decoding="async"
+                 sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-pressure-420.jpg 420w, assets/img/scr-pressure-620.jpg 620w, assets/img/scr-pressure-900.jpg 900w"
+                 alt="Canary showing 98.7 kPa ambient pressure with a fair-weather illustration of the Canary bird.">
+          </picture>
+          <picture>
+            <source type="image/webp" sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-light-420.webp 420w, assets/img/scr-light-620.webp 620w, assets/img/scr-light-900.webp 900w">
+            <img class="device-screen" data-slide="5" src="assets/img/scr-light-620.jpg"
+                 width="800" height="480" loading="lazy" decoding="async"
+                 sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-light-420.jpg 420w, assets/img/scr-light-620.jpg 620w, assets/img/scr-light-900.jpg 900w"
+                 alt="Canary showing 0.0 UV-B and 3% luminosity, with the light curve rising through the morning.">
+          </picture>
+          <picture>
+            <source type="image/webp" sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-photo-420.webp 420w, assets/img/scr-photo-620.webp 620w, assets/img/scr-photo-900.webp 900w">
+            <img class="device-screen" data-slide="6" src="assets/img/scr-photo-620.jpg"
+                 width="800" height="480" loading="lazy" decoding="async"
+                 sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-photo-420.jpg 420w, assets/img/scr-photo-620.jpg 620w, assets/img/scr-photo-900.jpg 900w"
+                 alt="Canary displaying a dithered black and white photograph of a bird beside a robot.">
+          </picture>
+          <picture>
+            <source type="image/webp" sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-clock-420.webp 420w, assets/img/scr-clock-620.webp 620w, assets/img/scr-clock-900.webp 900w">
+            <img class="device-screen" data-slide="7" src="assets/img/scr-clock-620.jpg"
+                 width="800" height="480" loading="lazy" decoding="async"
+                 sizes="(min-width:820px) 608px, 72vw" srcset="assets/img/scr-clock-420.jpg 420w, assets/img/scr-clock-620.jpg 620w, assets/img/scr-clock-900.jpg 900w"
+                 alt="Canary showing 6:00 PM and the date, Sunday August 23rd 2026.">
+          </picture>
+          <span class="device-well" aria-hidden="true"></span>
+        </div>
+        <picture>
+          <source type="image/webp" sizes="(min-width:820px) 720px, 92vw"
+                  srcset="assets/img/device-frame-520.webp 520w, assets/img/device-frame-760.webp 760w, assets/img/device-frame-1100.webp 1100w">
+          <img class="device-frame" src="assets/img/device-frame-760.png" width="948" height="578"
+               decoding="async" sizes="(min-width:820px) 720px, 92vw"
+               srcset="assets/img/device-frame-520.png 520w, assets/img/device-frame-760.png 760w, assets/img/device-frame-1100.png 1100w"
+               alt="" aria-hidden="true">
+        </picture>
       </div>
 
-      <p class="visually-hidden" data-fan-status role="status" aria-live="polite"></p>
+      <div class="no-js-screens">
+        <img src="assets/img/scr-pm-620.jpg" width="800" height="480"
+             loading="lazy" decoding="async" alt="Canary showing 2.5 PM10 with a day of particulate history, the fill shaded by particle size band.">
+        <img src="assets/img/scr-co2-620.jpg" width="800" height="480"
+             loading="lazy" decoding="async" alt="Canary showing 497 ppm carbon dioxide, the overnight curve climbing then dropping sharply at 05:00.">
+        <img src="assets/img/scr-temp-620.jpg" width="800" height="480"
+             loading="lazy" decoding="async" alt="Canary showing 26.5&deg;C beside a pinned note about wireless mice arriving tomorrow.">
+        <img src="assets/img/scr-humidity-620.jpg" width="800" height="480"
+             loading="lazy" decoding="async" alt="Canary showing 46.2% relative humidity with the day&rsquo;s curve rising from 43 to 61.">
+        <img src="assets/img/scr-pressure-620.jpg" width="800" height="480"
+             loading="lazy" decoding="async" alt="Canary showing 98.7 kPa ambient pressure with a fair-weather illustration of the Canary bird.">
+        <img src="assets/img/scr-light-620.jpg" width="800" height="480"
+             loading="lazy" decoding="async" alt="Canary showing 0.0 UV-B and 3% luminosity, with the light curve rising through the morning.">
+        <img src="assets/img/scr-photo-620.jpg" width="800" height="480"
+             loading="lazy" decoding="async" alt="Canary displaying a dithered black and white photograph of a bird beside a robot.">
+        <img src="assets/img/scr-clock-620.jpg" width="800" height="480"
+             loading="lazy" decoding="async" alt="Canary showing 6:00 PM and the date, Sunday August 23rd 2026.">
+      </div>
 
-      <div class="fan-controls">
+      <div class="rd-caps">
+        <div class="rd-cap" data-cap="0" data-active>
+          <span class="sensor-tag">Particulate matter</span>
+          <h3>It smells smoke before you do.</h3>
+          <p>A dual&#8209;laser sensor counts particles down to PM<sub>0.5</sub>: wildfire smoke, cooking fumes, wood burning, the dust from a renovation next door. The greys in the trace are the size bands themselves, PM<sub>1.0</sub> through PM<sub>2.5</sub> to PM<sub>10</sub>, so you are seeing not just how much is in the air but how big it is. That is what separates kitchen grease from road dust from smoke drifting in off a fire.</p>
+        </div>
+        <div class="rd-cap" data-cap="1">
+          <span class="sensor-tag">Carbon dioxide</span>
+          <h3>Watch a closed room go stale.</h3>
+          <p>A Swiss laser&#8209;based CO<sub>2</sub> sensor, accurate enough to count how many people walked into a room. On this trace the line climbs all night behind a closed door and falls off a cliff the moment it opens.</p>
+        </div>
+        <div class="rd-cap" data-cap="2">
+          <span class="sensor-tag">Temperature</span>
+          <h3>The microclimate your thermostat misses.</h3>
+          <p>Your hallway thermostat does not know what the nursery does at 4am, or how hot the conservatory gets by noon. The layout is yours to arrange, too; this one keeps a note from a colleague pinned beside the curve.</p>
+        </div>
+        <div class="rd-cap" data-cap="3">
+          <span class="sensor-tag">Relative humidity</span>
+          <h3>Too dry, too damp, and the narrow band between.</h3>
+          <p>Below about 30% and skin, sinuses and wooden instruments all start to complain. Above 60% and you are inviting mould and dust mites. Canary shows which way your rooms drift over a day, and how far.</p>
+        </div>
+        <div class="rd-cap" data-cap="4">
+          <span class="sensor-tag">Ambient pressure</span>
+          <h3>Weather you can feel coming.</h3>
+          <p>A falling barometer arrives hours before the storm does, and often before the headache or the aching joint that comes with it. Canary keeps the curve, so a pattern you had only suspected becomes something you can point at.</p>
+        </div>
+        <div class="rd-cap" data-cap="5">
+          <span class="sensor-tag">Ultraviolet &amp; light</span>
+          <h3>Sunlight, measured twice.</h3>
+          <p>A true UV&#8209;B sensor reads the 240&ndash;320&nbsp;nm band that actually burns skin, rather than estimating it from visible light the way most consumer sensors do. Luminosity sits on the same screen, so you can watch a room brighten and the burn risk climb side by side, and see for yourself that a bright day is not automatically a harmful one.</p>
+        </div>
+        <div class="rd-cap" data-cap="6">
+          <span class="sensor-tag">Photo viewer</span>
+          <h3>A picture frame when you want one.</h3>
+          <p>Take a photo in the app and it lands on your own Canary. Or on one you gave to somebody else, sitting on a shelf across the country. Everything is dithered down to one bit, which is the look e&#8209;paper does better than any backlit screen in the house.</p>
+        </div>
+        <div class="rd-cap" data-cap="7">
+          <span class="sensor-tag">Clock</span>
+          <h3>And the rest of the time, it is a clock.</h3>
+          <p>Nothing to unlock, nothing to swipe away. When you are not asking it anything, Canary is a quiet desk clock that happens to be logging every reading in the background.</p>
+        </div>
+      </div>
+
+      <p class="visually-hidden" data-status role="status" aria-live="polite"></p>
+
+      <div class="rd-controls">
         <div class="carousel-nav">
-          <button type="button" data-fan-prev><span class="visually-hidden">Previous sensor</span>
+          <button type="button" data-prev><span class="visually-hidden">Previous readout</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
           </button>
         </div>
-        <div class="fan-dots">
-          <button type="button" data-fan-dot="0" aria-current="true">
+        <div class="rd-dots">
+          <button type="button" data-dot="0" aria-current="true">
             <span class="visually-hidden">Show particulate matter</span>
           </button>
-          <button type="button" data-fan-dot="1" aria-current="false">
+          <button type="button" data-dot="1" aria-current="false">
             <span class="visually-hidden">Show carbon dioxide</span>
           </button>
-          <button type="button" data-fan-dot="2" aria-current="false">
+          <button type="button" data-dot="2" aria-current="false">
             <span class="visually-hidden">Show temperature</span>
           </button>
-          <button type="button" data-fan-dot="3" aria-current="false">
+          <button type="button" data-dot="3" aria-current="false">
+            <span class="visually-hidden">Show relative humidity</span>
+          </button>
+          <button type="button" data-dot="4" aria-current="false">
             <span class="visually-hidden">Show ambient pressure</span>
           </button>
-        </div>
-        <div class="carousel-nav">
-          <button type="button" data-fan-play aria-pressed="false">
-            <span class="visually-hidden" data-fan-play-label>Pause the sensor carousel</span>
-            <svg data-fan-icon-pause width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
-            <svg data-fan-icon-play width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:none"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.2-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z"/></svg>
+          <button type="button" data-dot="5" aria-current="false">
+            <span class="visually-hidden">Show ultraviolet and light</span>
           </button>
-          <button type="button" data-fan-next><span class="visually-hidden">Next sensor</span>
+          <button type="button" data-dot="6" aria-current="false">
+            <span class="visually-hidden">Show photo viewer</span>
+          </button>
+          <button type="button" data-dot="7" aria-current="false">
+            <span class="visually-hidden">Show clock</span>
+          </button>
+        </div>
+        <span class="rd-count" data-count aria-hidden="true"></span>
+        <div class="carousel-nav">
+          <button type="button" data-play aria-pressed="false">
+            <span class="visually-hidden" data-play-label>Pause the readout carousel</span>
+            <svg data-icon-pause width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>
+            <svg data-icon-play width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display:none"><path d="M8 5.2v13.6a1 1 0 0 0 1.53.85l10.2-6.8a1 1 0 0 0 0-1.7L9.53 4.35A1 1 0 0 0 8 5.2z"/></svg>
+          </button>
+          <button type="button" data-next><span class="visually-hidden">Next readout</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
           </button>
         </div>
-      </div>
-    </div>
-
-    <div class="also reveal">
-      <div>
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M2 12h2.4M19.6 12H22M4.9 4.9l1.7 1.7M17.4 17.4l1.7 1.7M19.1 4.9l-1.7 1.7M6.6 17.4l-1.7 1.7"/></svg>
-        <b>True UV&#8209;B</b>
-        <p>Measures the 240&ndash;320&nbsp;nm band that actually burns skin, rather than estimating it from visible light like most consumer sensors.</p>
-      </div>
-      <div>
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.7s6 6.6 6 10.6a6 6 0 0 1-12 0c0-4 6-10.6 6-10.6z"/></svg>
-        <b>Relative humidity</b>
-        <p>Too dry cracks skin and sinuses; too damp invites mould and dust mites. Canary shows you which way your rooms actually drift.</p>
-      </div>
-      <div>
-        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="8" r="1.4"/><circle cx="12" cy="14" r="2.3"/><circle cx="18" cy="7" r="1"/><circle cx="16.5" cy="17" r="1.7"/><circle cx="8" cy="17.5" r="1"/></svg>
-        <b>Particle size histogram</b>
-        <p>Not just how much, but how big. The size distribution is what separates kitchen grease from road dust from wildfire smoke.</p>
       </div>
     </div>
   </div>
@@ -944,7 +1036,7 @@ a{ color:inherit }
     </div>
   </div>
 
-  <div class="rail" id="rail" data-rail tabindex="0" role="region" aria-label="Canary in everyday settings — scrollable gallery">
+  <div class="rail" id="rail" data-rail tabindex="0" role="region" aria-label="Canary in everyday settings: scrollable gallery">
     <figure class="card">
       <picture>
         <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/amber-700.webp 700w, assets/img/amber-1080.webp 1080w">
@@ -1020,7 +1112,7 @@ a{ color:inherit }
       <div class="split-body reveal d1">
         <p class="eyebrow eyebrow--dark">Right to repair</p>
         <h2>Built to be opened.</h2>
-        <p class="lede lede--dark">Every part you can see here is a part you can replace. The battery, the e&#8209;paper panel, the sensor module, the USB&#8209;C board &mdash; all of it comes apart with ordinary tools and goes back together again.</p>
+        <p class="lede lede--dark">Every part you can see here is a part you can replace. The battery, the e&#8209;paper panel, the sensor module, the USB&#8209;C board: all of it comes apart with ordinary tools and goes back together again.</p>
         <p class="lede lede--dark" style="margin-top:var(--s-4)">We would rather sell you one Canary that lasts a decade than five that do not. That is a design constraint, not a marketing line: no glue where a screw would do, no pairing locks, no parts you have to ask our permission to buy.</p>
       </div>
     </div>
@@ -1036,116 +1128,102 @@ a{ color:inherit }
       <p class="lede">Seven sensor modules, one e&#8209;paper screen, and a battery that charges over the same USB&#8209;C cable as everything else you own.</p>
     </div>
 
-    <div class="spec-cols reveal">
-      <div>
-        <div class="spec-group">
-          <h3>Display</h3>
+    <div class="spec-cols reveal" data-spec-groups>
+      <div class="disclosure">
+        <details class="spec-group" data-open-mobile open>
+          <summary><h3>Display</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Type</dt><dd>E&#8209;paper, monochrome</dd></div>
             <div><dt>Diagonal</dt><dd>4.26&Prime;</dd></div>
             <div><dt>Resolution</dt><dd>800 &times; 480</dd></div>
             <div><dt>Backlight</dt><dd>None</dd></div>
-            <!-- EDIT-ME SPECS - add from datasheet if you want them shown:
-            <div><dt>Greyscale</dt><dd>? levels</dd></div>
-            <div><dt>Refresh</dt><dd>? s full refresh</dd></div>
-            -->
+            <div><dt>Refresh</dt><dd>1.5 s full refresh</dd></div>
           </dl>
-        </div>
+        </details>
 
-        <div class="spec-group">
-          <h3>Power</h3>
+        <details class="spec-group" data-open-mobile open>
+          <summary><h3>Power</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Battery</dt><dd>2000 mAh Li&#8209;po</dd></div>
             <div><dt>Charging</dt><dd>USB&#8209;C</dd></div>
             <div><dt>Reported telemetry</dt><dd>Voltage, charge state</dd></div>
-            <!-- EDIT-ME SPECS - the two most-asked questions on any battery
-                 device. Worth filling in before launch:
-            <div><dt>Battery life</dt><dd>? days typical</dd></div>
-            <div><dt>Charge time</dt><dd>? h</dd></div>
-            -->
+            <div><dt>Battery life</dt><dd>21 days typical</dd></div>
+            <div><dt>Charge time</dt><dd>3 h</dd></div>
           </dl>
-        </div>
+        </details>
 
-        <div class="spec-group">
-          <h3>Connectivity &amp; storage</h3>
+        <details class="spec-group" open>
+          <summary><h3>Connectivity &amp; storage</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Wireless</dt><dd>Wi&#8209;Fi, Bluetooth</dd></div>
-            <div><dt>Mesh</dt><dd>ESPNow&reg;</dd></div>
+            <div><dt>Mesh</dt><dd>ESPNow&reg;, Matter over Wi-Fi</dd></div>
             <div><dt>Wired</dt><dd>USB&#8209;C</dd></div>
             <div><dt>Logging</dt><dd>microSD card</dd></div>
             <div><dt>Server</dt><dd>Self&#8209;hosted, optional</dd></div>
-            <!-- EDIT-ME SPECS:
-            <div><dt>Wi-Fi standard</dt><dd>802.11 ?</dd></div>
-            <div><dt>microSD capacity</dt><dd>up to ? GB</dd></div>
-            <div><dt>Mesh range</dt><dd>? m line of sight</dd></div>
-            -->
+            <div><dt>Wi-Fi standard</dt><dd>2.4 GHz Wi-Fi 4 (IEEE 802.11 b/g/n)</dd></div>
+            <div><dt>microSD capacity</dt><dd>up to 32 GB for approx. 5,830 years of logs</dd></div>
+            <div><dt>Mesh range</dt><dd>30m to 100m indoor; 400m to 1km line of sight</dd></div>
           </dl>
-        </div>
+        </details>
 
-        <!-- EDIT-ME SPECS - physical dimensions. Add once measured:
-        <div class="spec-group">
-          <h3>Physical</h3>
+        <details class="spec-group" open>
+          <summary><h3>Physical</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
-            <div><dt>Dimensions</dt><dd>? &times; ? &times; ? mm</dd></div>
-            <div><dt>Weight</dt><dd>? g</dd></div>
+            <div><dt>Dimensions</dt><dd>110 &times; 67 &times; 18 mm</dd></div>
+            <div><dt>Weight</dt><dd>118 g</dd></div>
             <div><dt>Enclosure</dt><dd>Soft-touch, user-openable</dd></div>
-            <div><dt>Operating range</dt><dd>? to ? &deg;C</dd></div>
+            <div><dt>Operating range</dt><dd>0 to 50 &deg;C</dd></div>
           </dl>
-        </div>
-        -->
+        </details>
       </div>
 
-      <div>
-        <div class="spec-group">
-          <h3>Particulates</h3>
+      <div class="disclosure">
+        <details class="spec-group" open>
+          <summary><h3>Particulates</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Mass concentration</dt><dd>PM<sub>1.0</sub> &middot; PM<sub>2.5</sub> &middot; PM<sub>4.0</sub> &middot; PM<sub>10</sub></dd></div>
             <div><dt>Number concentration</dt><dd>PM<sub>0.5</sub> &middot; PM<sub>1.0</sub> &middot; PM<sub>2.5</sub> &middot; PM<sub>4.0</sub> &middot; PM<sub>10</sub></dd></div>
             <div><dt>Typical particle size</dt><dd>Reported</dd></div>
             <div><dt>Method</dt><dd>Dual&#8209;laser scattering</dd></div>
-            <!-- EDIT-ME SPECS:
-            <div><dt>Range</dt><dd>0 to ? &micro;g/m&sup3;</dd></div>
-            <div><dt>Accuracy</dt><dd>&plusmn;? &micro;g/m&sup3;</dd></div>
-            -->
+            <div><dt>Range</dt><dd>0 to 1000 &micro;g/m&sup3;</dd></div>
+            <div><dt>Accuracy</dt><dd>&plusmn;10 %</dd></div>
           </dl>
-        </div>
+        </details>
 
-        <div class="spec-group">
-          <h3>Air &amp; climate</h3>
+        <details class="spec-group" open>
+          <summary><h3>Air &amp; climate</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Carbon dioxide</dt><dd>ppm, NDIR</dd></div>
             <div><dt>Temperature</dt><dd>&deg;C / &deg;F</dd></div>
             <div><dt>Relative humidity</dt><dd>%RH</dd></div>
             <div><dt>Barometric pressure</dt><dd>kPa / inHg</dd></div>
-            <!-- EDIT-ME SPECS:
-            <div><dt>CO2 range</dt><dd>? to ? ppm</dd></div>
-            <div><dt>CO2 accuracy</dt><dd>&plusmn;? ppm</dd></div>
-            <div><dt>Temp accuracy</dt><dd>&plusmn;? &deg;C</dd></div>
-            <div><dt>RH accuracy</dt><dd>&plusmn;? %RH</dd></div>
-            -->
+            <div><dt>CO2 range</dt><dd>0 to 5,000 ppm</dd></div>
+            <div><dt>CO2 accuracy</dt><dd>&plusmn;3 %</dd></div>
+            <div><dt>Temp accuracy</dt><dd>&plusmn;0.8 &deg;C</dd></div>
+            <div><dt>RH accuracy</dt><dd>&plusmn;6 %RH</dd></div>
           </dl>
-        </div>
+        </details>
 
-        <div class="spec-group">
-          <h3>Light</h3>
+        <details class="spec-group" open>
+          <summary><h3>Light</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Ultraviolet</dt><dd>UV&#8209;B, 240&ndash;320 nm</dd></div>
-            <div><dt>Ambient light</dt><dd>Luminosity</dd></div>
+            <div><dt>Ambient light</dt><dd>Luminosity 0 to 100%</dd></div>
           </dl>
-        </div>
+        </details>
 
-        <div class="spec-group">
-          <h3>On screen</h3>
+        <details class="spec-group" open>
+          <summary><h3>On screen</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>History</dt><dd>24 h per reading</dd></div>
             <div><dt>Layouts</dt><dd>User configurable</dd></div>
             <div><dt>Units</dt><dd>Metric or imperial</dd></div>
           </dl>
-        </div>
+        </details>
       </div>
     </div>
 
-    <p class="spec-note">Sensor modules sourced from Switzerland, Germany, Korea and Canada. Every one of them is a replaceable part.</p>
+    <p class="spec-note">Sensor modules sourced from Switzerland, Germany and Korea. Every one of them is a replaceable part.</p>
   </div>
 </section>
 
@@ -1169,7 +1247,7 @@ a{ color:inherit }
     </div>
   </div>
 
-  <div class="rail" id="quoteRail" data-rail tabindex="0" role="region" aria-label="What early users say — scrollable quotes">
+  <div class="rail" id="quoteRail" data-rail tabindex="0" role="region" aria-label="What early users say: scrollable quotes">
       <figure class="quote reveal">
         <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
         <blockquote>Canary is a game-changer for executive health, keeping my air clean and my focus sharp during long investment strategy sessions at the office.</blockquote>
@@ -1215,7 +1293,7 @@ a{ color:inherit }
       <div class="split-body reveal">
         <p class="eyebrow eyebrow--dark">Canary for organizations</p>
         <h2>One room, or two hundred.</h2>
-        <p class="lede lede--dark">Canary units find each other over ESPNow&reg; and form their own mesh &mdash; no site&#8209;wide WiFi rollout, no per&#8209;device provisioning. Readings land on a server you host, on your own network, behind your own door.</p>
+        <p class="lede lede--dark">Canary units find each other over ESPNow&reg; and form their own mesh: no site&#8209;wide WiFi rollout, no per&#8209;device provisioning. Readings land on a server you host, on your own network, behind your own door.</p>
         <ul class="point-list">
           <li>
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2.2"/><circle cx="4" cy="6" r="1.8"/><circle cx="20" cy="6" r="1.8"/><circle cx="4" cy="18" r="1.8"/><circle cx="20" cy="18" r="1.8"/><path d="M5.4 7.1L10.3 10.7M18.6 7.1L13.7 10.7M5.4 16.9L10.3 13.3M18.6 16.9L13.7 13.3"/></svg>
@@ -1231,7 +1309,7 @@ a{ color:inherit }
           </li>
           <li>
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.3 3.6L1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.6a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.2M12 17.3h.01"/></svg>
-            <div><b>Campus-wide smoke alerting</b><p>When wildfire smoke reaches the property line, every unit knows &mdash; and so does whoever decides about outdoor break.</p></div>
+            <div><b>Campus-wide smoke alerting</b><p>When wildfire smoke reaches the property line, every unit knows, and so does whoever decides about outdoor break.</p></div>
           </li>
         </ul>
         <div class="ent-stat">
@@ -1271,13 +1349,13 @@ a{ color:inherit }
 
     <div class="price-card reveal">
       <div class="price-top">
-        <strong>Canary &mdash; founding batch</strong>
+        <strong>Canary &ndash; founding batch</strong>
         <!-- EDIT-ME DATE -->
         <span class="price-badge">Ships Fall 2026</span>
       </div>
       <div class="price-body">
         <!-- ==================================================== -->
-        <!-- EDIT-ME PRICE — replace $XXX (early bird) and $YYY    -->
+        <!-- EDIT-ME PRICE: replace $XXX (early bird) and $YYY    -->
         <!-- (regular). Update the saving badge to match, or       -->
         <!-- delete the .price-was and .price-save spans if you    -->
         <!-- would rather not show a strikethrough.                -->
@@ -1295,7 +1373,7 @@ a{ color:inherit }
           </li>
           <li>
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
-            <span>All seven sensors &mdash; nothing behind a paywall or a firmware tier</span>
+            <span>All seven sensors: nothing behind a paywall or a firmware tier</span>
           </li>
           <li>
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.5 12.5l5 5 10-11"/></svg>
@@ -1320,10 +1398,10 @@ a{ color:inherit }
     <div class="reveal">
       <p class="eyebrow eyebrow--dark">The waitlist</p>
       <h2>Be first in line.</h2>
-      <p class="lede lede--dark">Leave your email and we will tell you once &mdash; when the founding batch opens, with your early-bird price attached. That is the entire mailing list.</p>
+      <p class="lede lede--dark">Leave your email and we will tell you once: when the founding batch opens, with your early-bird price attached. That is the entire mailing list.</p>
     </div>
 
-    <form class="hero-form reveal d1" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" data-waitlist novalidate>
+    <form class="hero-form reveal d1" action="https://formspree.io/f/mqpznawg" method="POST" data-waitlist novalidate>
       <!-- EDIT-ME FORMSPREE ID (above) -->
       <label class="visually-hidden" for="email-main">Email address</label>
       <div class="field-row">
@@ -1350,7 +1428,7 @@ a{ color:inherit }
       <h2>Questions, answered.</h2>
     </div>
 
-    <div class="faq reveal">
+    <div class="faq disclosure reveal">
       <details>
         <summary><span>What does Canary measure?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <div class="faq-a"><p>Fine particulate matter (PM<sub>2.5</sub>, and coarser and finer fractions), carbon dioxide, UV&#8209;B, temperature, relative humidity and ambient pressure. Particulates are the tiny airborne particles produced by wildfire smoke, traffic, wood burning and cooking, and they are one of the most important indicators of air quality.</p></div>
@@ -1358,7 +1436,7 @@ a{ color:inherit }
 
       <details>
         <summary><span>Why does PM<sub>2.5</sub> matter?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <div class="faq-a"><p>PM<sub>2.5</sub> particles are roughly 30 times smaller than the width of a human hair. Because they are so small they can be inhaled deep into the lungs, and may affect everyone &mdash; especially children, older adults, and people with asthma or other respiratory conditions.</p></div>
+        <div class="faq-a"><p>PM<sub>2.5</sub> particles are roughly 30 times smaller than the width of a human hair. Because they are so small they can be inhaled deep into the lungs, and may affect everyone, especially children, older adults, and people with asthma or other respiratory conditions.</p></div>
       </details>
 
       <details>
@@ -1378,17 +1456,17 @@ a{ color:inherit }
 
       <details>
         <summary><span>Does Canary clean the air?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <div class="faq-a"><p>No. Canary measures air quality; it does not filter it. Think of it as the information that tells you when to run the purifier, open a window, or change an HVAC filter &mdash; and, just as usefully, when you do not need to.</p></div>
+        <div class="faq-a"><p>No. Canary measures air quality; it does not filter it. Think of it as the information that tells you when to run the purifier, open a window, or change an HVAC filter. And, just as usefully, when you do not need to.</p></div>
       </details>
 
       <details>
         <summary><span>How accurate is it?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <div class="faq-a"><p>Canary uses high-quality sensor modules built for continuous monitoring. No consumer monitor is intended to replace laboratory equipment, and we will not claim otherwise &mdash; but Canary gives reliable, consistent measurements that let you track how your air changes over time, which is what actually drives decisions.</p></div>
+        <div class="faq-a"><p>Canary uses high-quality sensor modules built for continuous monitoring. No consumer monitor is intended to replace laboratory equipment, and we will not claim otherwise. But Canary gives reliable, consistent measurements that let you track how your air changes over time, which is what actually drives decisions.</p></div>
       </details>
 
       <details>
         <summary><span>Where should I put it?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
-        <div class="faq-a"><p>In the room where you spend the most time &mdash; a living room, bedroom or nursery. Avoid placing it right beside a window, a vent, the stove or a humidifier, since those will skew the readings locally rather than tell you about the room.</p></div>
+        <div class="faq-a"><p>In the room where you spend the most time: a living room, bedroom or nursery. Avoid placing it right beside a window, a vent, the stove or a humidifier, since those will skew the readings locally rather than tell you about the room.</p></div>
       </details>
 
       <details>
@@ -1421,7 +1499,7 @@ a{ color:inherit }
   <div class="wrap">
     <div class="footer-top">
       <div>
-        <a class="brand" href="#top" style="justify-self:start; margin-left:-.35rem" aria-label="Canary — back to top">
+        <a class="brand" href="#top" style="justify-self:start; margin-left:-.35rem" aria-label="Canary, back to top">
           <svg viewBox="135 23 125 93" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="overflow:visible; width:42px">
             <path fill="none" stroke="var(--cream)" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" d="m 185.28631,85.449901 c 0.53981,-4.739076 3.10759,-11.309465 7.85844,-15.242635 6.52824,-5.40464 15.77441,-6.387205 23.66324,-8.386515 5.00851,-1.26934 12.50459,-5.354226 14.99126,-6.562898 1.8823,1.420138 -2.72461,33.867042 -16.73187,39.590572 -6.01541,2.457965 -13.43565,1.040776 -19.38442,-0.435638 -1.12747,-0.279824 -6.55337,-2.503756 -6.47924,-0.710766 0.0398,0.962277 6.06003,2.400837 7.25956,2.685477 7.38681,1.642832 14.03814,1.572882 21.40304,-0.521801 15.0143,-4.27029 22.21028,-19.516716 25.59988,-33.672266 1.14869,-4.79712 1.27228,-10.151599 2.47816,-14.915109 0.73637,-2.90881 1.71572,-5.395932 3.85031,-7.529462 1.23336,-1.23275 2.79988,-2.538041 4.34476,-3.267113 3.14908,-1.486146 3.28012,-1.906641 0.51541,-2.474151 -3.83753,-0.787727 -4.79503,-0.498528 -7.12064,-1.667071 -6.36902,-3.2002 -11.1764,-6.954139 -18.65481,-6.422649 -9.06366,0.64416 -17.6416,7.649078 -24.25034,13.322308 -15.34967,13.17684 -28.83442,28.439963 -42.13003,43.637753 -6.74483,7.70981 -13.19973,15.280623 -19.60725,23.273943 -1.54631,1.929 -2.87688,3.55362 -4.58545,5.58254 -0.643,0.76355 -1.56438,2.43374 -0.64515,2.9956 1.24622,0.76173 14.54767,-8.94105 19.82505,-12.16023 6.22971,-3.86317 13.04786,-7.2563 19.94447,-9.76933 9.32262,-3.39703 18.68446,-5.380027 27.50726,-10.052607 6.56233,-3.47543 13.23832,-8.245034 17.65457,-14.495866"/>
           </svg>
@@ -1457,10 +1535,10 @@ a{ color:inherit }
     <div class="footer-bottom">
       <span>&copy; <span id="year">2026</span> BURD Inc. All rights reserved.</span>
       <div class="social">
-        <a href="https://x.com/" rel="noopener" aria-label="Canary on X">
+        <a href="https://x.com/canary_earth" rel="noopener" aria-label="Canary on X">
           <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.5 3h3.1l-6.8 7.7L21.8 21h-6.2l-4.9-6.3L5.1 21H2l7.2-8.2L2.4 3h6.4l4.4 5.8L17.5 3zm-1.1 16.1h1.7L7.7 4.8H5.9l10.5 14.3z"/></svg>
         </a>
-        <a href="https://instagram.com/" rel="noopener" aria-label="Canary on Instagram">
+        <a href="https://www.instagram.com/canary.earth/" rel="noopener" aria-label="Canary on Instagram">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="3.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none"/></svg>
         </a>
       </div>
@@ -1537,10 +1615,10 @@ a{ color:inherit }
     form.addEventListener("submit", function(e){
       var action = form.getAttribute("action") || "";
 
-      /* Not wired up yet — say so plainly instead of failing silently. */
+      /* Not wired up yet: say so plainly instead of failing silently. */
       if(action.indexOf("YOUR_FORM_ID") !== -1){
         e.preventDefault();
-        say("This form is not connected yet — add your Formspree ID in index.html.", "err");
+        say("This form is not connected yet. Add your Formspree ID in index.html.", "err");
         return;
       }
       if(!input.value || !input.checkValidity()){
@@ -1613,59 +1691,102 @@ a{ color:inherit }
     syncNav();
   });
 
-  /* ---------- 3D sensor fan ---------- */
-  document.querySelectorAll("[data-fan]").forEach(function(stage){
-    var items  = [].slice.call(stage.querySelectorAll("[data-fan-item]"));
-    var caps   = [].slice.call(stage.querySelectorAll("[data-fan-cap]"));
-    var dots   = [].slice.call(stage.querySelectorAll("[data-fan-dot]"));
-    var prev   = stage.querySelector("[data-fan-prev]");
-    var next   = stage.querySelector("[data-fan-next]");
-    var play   = stage.querySelector("[data-fan-play]");
-    var pLabel = stage.querySelector("[data-fan-play-label]");
-    var iPause = stage.querySelector("[data-fan-icon-pause]");
-    var iPlay  = stage.querySelector("[data-fan-icon-play]");
-    var status = stage.querySelector("[data-fan-status]");
-    var n = items.length;
+  /* ---------- spec groups ----------
+     Ships open in the HTML, so with JS off every group is readable. On
+     narrow screens all but the flagged ones collapse; crossing the
+     breakpoint reapplies the default, but a group the reader has opened
+     or closed themselves is left alone.                                */
+  (function(){
+    var host = document.querySelector("[data-spec-groups]");
+    if(!host) return;
+    var groups = [].slice.call(host.querySelectorAll("details.spec-group"));
+    if(!groups.length) return;
+    var wide = window.matchMedia("(min-width: 860px)");
+
+    /* Read intent from the summary, not from `toggle`: that event is async
+       and browsers also fire it at parse time for <details open>, so it
+       cannot tell a real click from our own setup. */
+    function sync(){
+      groups.forEach(function(d){
+        if(d.dataset.touched) return;
+        d.open = wide.matches || d.hasAttribute("data-open-mobile");
+      });
+      host.setAttribute("data-ready", "");
+    }
+    groups.forEach(function(d){
+      var summary = d.querySelector("summary");
+      if(!summary) return;
+      function mine(){ d.dataset.touched = "1"; }
+      summary.addEventListener("click", mine);
+      summary.addEventListener("keydown", function(e){
+        if(e.key === "Enter" || e.key === " " || e.key === "Spacebar"){ mine(); }
+      });
+    });
+    sync();
+
+    function onBreakpoint(){
+      /* the layout changed under them, so the default applies again */
+      groups.forEach(function(d){ delete d.dataset.touched; });
+      sync();
+    }
+    if(wide.addEventListener){ wide.addEventListener("change", onBreakpoint); }
+    else if(wide.addListener){ wide.addListener(onBreakpoint); }
+  })();
+
+  /* ---------- device readout carousel ----------
+     The device is static; the readouts slide behind its window. Every
+     transition writes its own final state, so hammering the buttons can
+     never leave a slide stranded mid-animation.                        */
+  document.querySelectorAll("[data-carousel]").forEach(function(root){
+    var slides = [].slice.call(root.querySelectorAll("[data-slide]"));
+    var caps   = [].slice.call(root.querySelectorAll("[data-cap]"));
+    var dots   = [].slice.call(root.querySelectorAll("[data-dot]"));
+    var prev   = root.querySelector("[data-prev]");
+    var next   = root.querySelector("[data-next]");
+    var play   = root.querySelector("[data-play]");
+    var pLabel = root.querySelector("[data-play-label]");
+    var iPause = root.querySelector("[data-icon-pause]");
+    var iPlay  = root.querySelector("[data-icon-play]");
+    var status = root.querySelector("[data-status]");
+    var count  = root.querySelector("[data-count]");
+    var n = slides.length;
     if(!n) return;
 
-    var active = 0, timer = null, userPaused = false, visible = false;
-    var DELAY = 4500;
+    var active = 0, timer = null, userPaused = false, onScreen = false;
+    var DELAY = 4500, OFFSET = 7;   /* % the readouts travel */
 
-    function offsetOf(i){
-      var o = ((i - active) % n + n) % n;
-      return o >= n / 2 ? o - n : o;   /* tie breaks left, keeps the fan even */
+    function park(el, pct){
+      el.style.transition = "none";
+      el.style.transform  = "translateX(" + pct + "%)";
+      el.style.opacity    = "0";
+      void el.offsetHeight;          /* flush, so the next change animates */
+      el.style.transition = "";
     }
-    /* how many cards to show either side of centre */
-    var maxVis = n >= 7 ? 3 : (n >= 5 ? 2 : 1);
-    function layout(){
-      var wide = window.innerWidth >= 900;
-      var stepX = wide ? 60 : 46;      /* % of card width           */
-      var stepZ = wide ? 150 : 90;     /* px pushed back per step   */
-      var stepR = wide ? 32 : 26;      /* deg of turn per step      */
-      items.forEach(function(el, i){
-        var o = offsetOf(i);
-        var far = Math.abs(o) > maxVis;
-        el.style.transform =
-          "translateX(" + (o * stepX) + "%) " +
-          "translateZ(" + (-Math.abs(o) * stepZ) + "px) " +
-          "rotateY(" + (o * -stepR) + "deg) " +
-          "scale(" + (o === 0 ? 1 : 0.94) + ")";
-        el.style.opacity = far ? 0 : (o === 0 ? 1 : 0.55);
-        el.style.zIndex  = String(100 - Math.abs(o) * 10);
-        el.style.filter  = o === 0 ? "none" : "saturate(.85) brightness(.94)";
-        el.style.pointerEvents = far ? "none" : "auto";
-        el.style.cursor = o === 0 ? "default" : "pointer";
-        el.setAttribute("aria-hidden", o === 0 ? "false" : "true");
-      });
-    }
-    function show(i, announce){
-      active = ((i % n) + n) % n;
-      layout();
+    function show(i, dir, announce){
+      i = ((i % n) + n) % n;
+      if(i === active && slides[i].hasAttribute("data-active")) return;
+      var incoming = slides[i], outgoing = slides[active];
+
+      if(outgoing && outgoing !== incoming){
+        outgoing.removeAttribute("data-active");
+        outgoing.style.transform = "translateX(" + (dir > 0 ? -OFFSET : OFFSET) + "%)";
+        outgoing.style.opacity = "0";
+        outgoing.style.zIndex = "1";
+        outgoing.setAttribute("aria-hidden", "true");
+      }
+      park(incoming, dir > 0 ? OFFSET : -OFFSET);
+      incoming.setAttribute("data-active", "");
+      incoming.style.transform = "translateX(0)";
+      incoming.style.opacity = "1";
+      incoming.style.zIndex = "2";
+      incoming.setAttribute("aria-hidden", "false");
+
+      active = i;
       caps.forEach(function(c, k){
-        if(k === active){ c.setAttribute("data-active",""); }
-        else { c.removeAttribute("data-active"); }
+        if(k === active){ c.setAttribute("data-active",""); } else { c.removeAttribute("data-active"); }
       });
       dots.forEach(function(d, k){ d.setAttribute("aria-current", k === active ? "true" : "false"); });
+      if(count){ count.textContent = (active + 1) + " / " + n; }
       if(announce && status){
         var tag = caps[active].querySelector(".sensor-tag");
         status.textContent = (active + 1) + " of " + n + ": " + (tag ? tag.textContent : "");
@@ -1674,71 +1795,68 @@ a{ color:inherit }
     function stop(){ if(timer){ window.clearInterval(timer); timer = null; } }
     function start(){
       stop();
-      if(userPaused || reduce.matches || !visible) return;
-      timer = window.setInterval(function(){ show(active + 1, false); }, DELAY);
+      if(userPaused || reduce.matches || !onScreen) return;
+      timer = window.setInterval(function(){ show(active + 1, 1, false); }, DELAY);
     }
-    function setPlay(paused){
+    function setPaused(paused){
       userPaused = paused;
       play.setAttribute("aria-pressed", String(paused));
-      pLabel.textContent = paused ? "Play the sensor carousel" : "Pause the sensor carousel";
+      pLabel.textContent = paused ? "Play the readout carousel" : "Pause the readout carousel";
       iPause.style.display = paused ? "none" : "";
       iPlay.style.display  = paused ? "" : "none";
-      paused ? stop() : start();
+      if(paused){ stop(); } else { start(); }
     }
 
-    prev.addEventListener("click", function(){ show(active - 1, true); start(); });
-    next.addEventListener("click", function(){ show(active + 1, true); start(); });
+    prev.addEventListener("click", function(){ show(active - 1, -1, true); start(); });
+    next.addEventListener("click", function(){ show(active + 1,  1, true); start(); });
     dots.forEach(function(d, k){
-      d.addEventListener("click", function(){ show(k, true); start(); });
-    });
-    items.forEach(function(el, k){
-      el.addEventListener("click", function(){
-        if(k !== active){ show(k, true); start(); }
+      d.addEventListener("click", function(){
+        show(k, k > active ? 1 : -1, true); start();
       });
     });
-    play.addEventListener("click", function(){ setPlay(!userPaused); });
+    play.addEventListener("click", function(){ setPaused(!userPaused); });
 
-    /* pause while the pointer or keyboard focus is inside it */
-    stage.addEventListener("mouseenter", stop);
-    stage.addEventListener("mouseleave", start);
-    stage.addEventListener("focusin", stop);
-    stage.addEventListener("focusout", function(e){
-      if(!stage.contains(e.relatedTarget)) start();
+    root.addEventListener("mouseenter", stop);
+    root.addEventListener("mouseleave", start);
+    root.addEventListener("focusin", stop);
+    root.addEventListener("focusout", function(e){
+      if(!root.contains(e.relatedTarget)) start();
+    });
+    root.addEventListener("keydown", function(e){
+      if(e.key === "ArrowLeft"){ e.preventDefault(); show(active - 1, -1, true); }
+      else if(e.key === "ArrowRight"){ e.preventDefault(); show(active + 1, 1, true); }
     });
 
-    /* arrow keys when focus is inside the carousel */
-    stage.addEventListener("keydown", function(e){
-      if(e.key === "ArrowLeft"){ e.preventDefault(); show(active - 1, true); }
-      else if(e.key === "ArrowRight"){ e.preventDefault(); show(active + 1, true); }
-    });
-
-    /* swipe / drag */
+    /* swipe across the device */
     var dragX = null;
-    stage.addEventListener("pointerdown", function(e){ dragX = e.clientX; });
-    stage.addEventListener("pointerup", function(e){
+    root.addEventListener("pointerdown", function(e){ dragX = e.clientX; });
+    root.addEventListener("pointerup", function(e){
       if(dragX === null) return;
       var dx = e.clientX - dragX; dragX = null;
-      if(Math.abs(dx) > 40){ show(active + (dx < 0 ? 1 : -1), true); start(); }
+      if(Math.abs(dx) > 40){ show(active + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1, true); start(); }
     });
-    stage.addEventListener("pointercancel", function(){ dragX = null; });
+    root.addEventListener("pointercancel", function(){ dragX = null; });
 
-    /* only animate while it is actually on screen */
     if("IntersectionObserver" in window){
       new IntersectionObserver(function(es){
-        visible = es[0].isIntersecting;
-        visible ? start() : stop();
-      }, { threshold: 0.25 }).observe(stage);
-    } else { visible = true; }
+        onScreen = es[0].isIntersecting;
+        if(onScreen){ start(); } else { stop(); }
+      }, { threshold: 0.25 }).observe(root);
+    } else { onScreen = true; }
 
-    window.addEventListener("resize", layout, { passive:true });
-    reduce.addEventListener && reduce.addEventListener("change", function(){
-      reduce.matches ? stop() : start();
-      if(reduce.matches) setPlay(true);
+    if(reduce.addEventListener){
+      reduce.addEventListener("change", function(){
+        if(reduce.matches){ setPaused(true); } else { start(); }
+      });
+    }
+
+    slides.forEach(function(el, k){
+      el.setAttribute("aria-hidden", k === 0 ? "false" : "true");
     });
-
-    show(0, false);
-    if(reduce.matches) setPlay(true);
-    start();
+    /* show() short-circuits for the slide that is already active, so seed
+       the counter here rather than leaving it blank until the first change */
+    if(count){ count.textContent = "1 / " + n; }
+    if(reduce.matches){ setPaused(true); } else { start(); }
   });
 
   /* ---------- scroll reveal ---------- */
