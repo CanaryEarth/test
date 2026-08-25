@@ -388,13 +388,17 @@ a{ color:inherit }
 .rail::-webkit-scrollbar{ height:8px }
 .rail::-webkit-scrollbar-thumb{ background:var(--line); border-radius:99px }
 .card{
-  position:relative; flex:0 0 78%; max-width:340px; scroll-snap-align:start;
+  position:relative; flex:0 0 84%; max-width:530px; scroll-snap-align:start;
   border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-md);
   background:var(--ink);
 }
-@media (min-width:640px){ .card{ flex-basis:44% } }
-@media (min-width:1024px){ .card{ flex-basis:27% } }
-.card img{ width:100%; aspect-ratio:4/5; object-fit:cover }
+@media (min-width:640px){ .card{ flex-basis:56% } }
+@media (min-width:1024px){ .card{ flex-basis:40% } }
+/* The sources are mostly 2.16:1, so the crop opens up as the viewport grows:
+   nearly square on a phone, properly landscape on a desktop. */
+.card img{ width:100%; aspect-ratio:1/1; object-fit:cover; object-position:50% 50% }
+@media (min-width:640px){  .card img{ aspect-ratio:4/3 } }
+@media (min-width:1024px){ .card img{ aspect-ratio:16/10 } }
 .card figcaption{
   position:absolute; inset:auto 0 0 0; padding:var(--s-6) var(--s-5) var(--s-5);
   background:linear-gradient(to top, rgb(18 20 21 / .92) 12%, rgb(18 20 21 / .72) 48%, rgb(18 20 21 / 0));
@@ -928,7 +932,7 @@ a{ color:inherit }
         <div class="rd-cap" data-cap="0" data-active>
           <span class="sensor-tag">Particulate matter</span>
           <h3>It smells smoke before you do.</h3>
-          <p>A dual&#8209;laser sensor counts particles down to PM<sub>0.5</sub>: wildfire smoke, cooking fumes, wood burning, the dust from a renovation next door. The greys in the trace are the size bands themselves, PM<sub>1.0</sub> through PM<sub>2.5</sub> to PM<sub>10</sub>, so you are seeing not just how much is in the air but how big it is. That is what separates kitchen grease from road dust from smoke drifting in off a fire.</p>
+          <p>A dual&#8209;laser sensor counts particles from wildfire smoke, pollen, mold. The greys in the trace are the size bands themselves, PM<sub>1.0</sub> through PM<sub>2.5</sub> to PM<sub>10</sub>, so you are seeing not just how much is in the air but how big it is. That is what separates kitchen grease from road dust from smoke drifting in off a fire.</p>
         </div>
         <div class="rd-cap" data-cap="1">
           <span class="sensor-tag">Carbon dioxide</span>
@@ -1039,57 +1043,90 @@ a{ color:inherit }
   <div class="rail" id="rail" data-rail tabindex="0" role="region" aria-label="Canary in everyday settings: scrollable gallery">
     <figure class="card">
       <picture>
-        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/amber-700.webp 700w, assets/img/amber-1080.webp 1080w">
-        <img src="assets/img/amber-1080.jpg" width="1080" height="810" loading="lazy" decoding="async"
-             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
-             srcset="assets/img/amber-700.jpg 700w, assets/img/amber-1080.jpg 1080w"
-             alt="A Canary in a warm yellow case on a wooden table, its screen showing a long overnight particulate hump.">
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-home-520.webp 520w, assets/img/live-home-800.webp 800w, assets/img/live-home-1200.webp 1200w">
+        <img src="assets/img/live-home-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-home-520.jpg 520w, assets/img/live-home-800.jpg 800w, assets/img/live-home-1200.jpg 1200w"
+             alt="A Canary in a warm yellow case on a wooden table, showing a long overnight particulate hump." style="object-position:50% 50%">
       </picture>
       <figcaption><h3>At home</h3><p>The overnight hump nobody knew about.</p></figcaption>
     </figure>
 
     <figure class="card">
       <picture>
-        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/hand-800.webp 800w, assets/img/hand-1200.webp 1200w">
-        <img src="assets/img/hand-1200.jpg" width="4000" height="1848" loading="lazy" decoding="async"
-             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
-             srcset="assets/img/hand-800.jpg 800w, assets/img/hand-1200.jpg 1200w"
-             alt="A Canary held in one hand beside a keyboard, showing a carbon dioxide reading."
-             style="object-position:58% 50%">
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-purifier-520.webp 520w, assets/img/live-purifier-800.webp 800w, assets/img/live-purifier-1200.webp 1200w">
+        <img src="assets/img/live-purifier-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-purifier-520.jpg 520w, assets/img/live-purifier-800.jpg 800w, assets/img/live-purifier-1200.jpg 1200w"
+             alt="A Canary on a desk next to an air purifier, its particulate trace climbing steeply overnight to 70.9 PM10." style="object-position:50% 55%">
+      </picture>
+      <figcaption><h3>Beside the purifier</h3><p>It tells you when to switch the thing on.</p></figcaption>
+    </figure>
+
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-hand-520.webp 520w, assets/img/live-hand-800.webp 800w, assets/img/live-hand-1200.webp 1200w">
+        <img src="assets/img/live-hand-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-hand-520.jpg 520w, assets/img/live-hand-800.jpg 800w, assets/img/live-hand-1200.jpg 1200w"
+             alt="A Canary held in one hand beside a keyboard, showing a carbon dioxide reading." style="object-position:58% 50%">
       </picture>
       <figcaption><h3>In hand</h3><p>Pocketable. Readable in full sun.</p></figcaption>
     </figure>
 
     <figure class="card">
       <picture>
-        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/chess-800.webp 800w, assets/img/chess-1200.webp 1200w">
-        <img src="assets/img/chess-1200.jpg" width="4000" height="1848" loading="lazy" decoding="async"
-             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
-             srcset="assets/img/chess-800.jpg 800w, assets/img/chess-1200.jpg 1200w"
-             alt="A Canary standing at the edge of a chessboard mid-game, showing 846 ppm carbon dioxide."
-             style="object-position:70% 50%">
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-outdoors-520.webp 520w, assets/img/live-outdoors-800.webp 800w, assets/img/live-outdoors-1200.webp 1200w">
+        <img src="assets/img/live-outdoors-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-outdoors-520.jpg 520w, assets/img/live-outdoors-800.jpg 800w, assets/img/live-outdoors-1200.jpg 1200w"
+             alt="A Canary held up against trees and blue sky in Tricorder mode, showing 4.74 PM10 with max, average and minimum." style="object-position:50% 50%">
+      </picture>
+      <figcaption><h3>Out on a walk</h3><p>Tricorder mode, held up to the sky.</p></figcaption>
+    </figure>
+
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-table-520.webp 520w, assets/img/live-table-800.webp 800w, assets/img/live-table-1200.webp 1200w">
+        <img src="assets/img/live-table-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-table-520.jpg 520w, assets/img/live-table-800.jpg 800w, assets/img/live-table-1200.jpg 1200w"
+             alt="A Canary standing at the edge of a chessboard mid-game, showing 846 ppm carbon dioxide." style="object-position:70% 50%">
       </picture>
       <figcaption><h3>At the table</h3><p>Silent. No fan, no chime, no glow.</p></figcaption>
     </figure>
 
     <figure class="card">
       <picture>
-        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/gold-700.webp 700w, assets/img/gold-1000.webp 1000w, assets/img/gold-1600.webp 1600w">
-        <img src="assets/img/gold-1000.jpg" width="2660" height="1848" loading="lazy" decoding="async"
-             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
-             srcset="assets/img/gold-700.jpg 700w, assets/img/gold-1000.jpg 1000w, assets/img/gold-1600.jpg 1600w"
-             alt="A Canary on a reflective gold surface showing 585 ppm carbon dioxide and the night's full curve.">
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-desk-520.webp 520w, assets/img/live-desk-800.webp 800w, assets/img/live-desk-1200.webp 1200w">
+        <img src="assets/img/live-desk-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-desk-520.jpg 520w, assets/img/live-desk-800.jpg 800w, assets/img/live-desk-1200.jpg 1200w"
+             alt="A Canary on a reflective gold surface showing 585 ppm carbon dioxide and the night's full curve." style="object-position:50% 50%">
       </picture>
       <figcaption><h3>On the desk</h3><p>A whole working day, at a glance.</p></figcaption>
     </figure>
 
     <figure class="card">
       <picture>
-        <source type="image/webp" sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw" srcset="assets/img/mask-700.webp 700w, assets/img/mask-1080.webp 1080w">
-        <img src="assets/img/mask-1080.jpg" width="1080" height="498" loading="lazy" decoding="async"
-             sizes="(min-width:1024px) 27vw, (min-width:640px) 44vw, 78vw"
-             srcset="assets/img/mask-700.jpg 700w, assets/img/mask-1080.jpg 1080w"
-             alt="A Canary displaying the words Ready, Place mask over holes, with a line drawing of a respirator mask.">
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-winter-520.webp 520w, assets/img/live-winter-800.webp 800w, assets/img/live-winter-1200.webp 1200w">
+        <img src="assets/img/live-winter-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-winter-520.jpg 520w, assets/img/live-winter-800.jpg 800w, assets/img/live-winter-1200.jpg 1200w"
+             alt="A Canary on a windowsill above a snowy street, showing ambient pressure dropping steeply." style="object-position:50% 45%">
+      </picture>
+      <figcaption><h3>On the windowsill</h3><p>Watching the pressure fall ahead of the snow.</p></figcaption>
+    </figure>
+
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-gift-520.webp 520w, assets/img/live-gift-800.webp 800w, assets/img/live-gift-1200.webp 1200w">
+        <img src="assets/img/live-gift-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-gift-520.jpg 520w, assets/img/live-gift-800.jpg 800w, assets/img/live-gift-1200.jpg 1200w"
+             alt="Three Canary units on a table all showing an uploaded Happy Mother's Day photo, with the upload tool open on the monitor behind them." style="object-position:50% 50%">
+      </picture>
+      <figcaption><h3>Given away</h3><p>Send a picture to a Canary across the country.</p></figcaption>
+    </figure>
+
+    <figure class="card">
+      <picture>
+        <source type="image/webp" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-mask-520.webp 520w, assets/img/live-mask-800.webp 800w, assets/img/live-mask-1200.webp 1200w">
+        <img src="assets/img/live-mask-800.jpg" width="1200" height="750"
+             loading="lazy" decoding="async" sizes="(min-width:1024px) 40vw, (min-width:640px) 56vw, 84vw" srcset="assets/img/live-mask-520.jpg 520w, assets/img/live-mask-800.jpg 800w, assets/img/live-mask-1200.jpg 1200w"
+             alt="A Canary displaying the words Ready, Place mask over holes, with a line drawing of a respirator mask." style="object-position:50% 50%">
       </picture>
       <figcaption><h3>Mask test</h3><p>Find out what your respirator really filters.</p></figcaption>
     </figure>
