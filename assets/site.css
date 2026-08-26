@@ -711,6 +711,9 @@ a{ color:inherit }
 .sci-fig--art{ border-radius:var(--radius-lg); box-shadow:var(--shadow-md) }
 .sci-body > p + p{ margin-top:var(--s-4) }
 .sci-body > p:not(.eyebrow):not(.sci-dl){ color:var(--muted); max-width:60ch }
+/* the same split is reused on the dark business section, where the
+   light-mode muted grey drops to 2.69:1 */
+.dark .sci-body > p:not(.eyebrow):not(.sci-dl){ color:var(--muted-dark) }
 .sci-body h2{ margin-bottom:var(--s-5) }
 .sci-dl{ margin-top:var(--s-6) }
 .sci-dl .btn{ flex-wrap:wrap; text-align:left; height:auto; padding-block:.85rem }
@@ -722,3 +725,58 @@ a{ color:inherit }
 .sci-note h2{ font-size:clamp(1.4rem,2.6vw,1.9rem); margin-bottom:var(--s-4) }
 .sci-note p{ color:var(--muted) }
 .sci-note p + p{ margin-top:var(--s-4) }
+
+/* --- business page ----------------------------------------------- */
+.sci-fig-wrap--wide picture{ max-width:520px }
+.biz-chart{ width:100%; border-radius:var(--radius); border:1px solid var(--line); background:#fff }
+.biz-extra{
+  display:grid; gap:var(--s-2); margin-top:var(--s-4);
+  grid-template-columns:1fr;
+}
+@media (min-width:640px){ .biz-extra{ grid-template-columns:1fr 1fr; gap:var(--s-3) var(--s-4) } }
+.biz-extra label{
+  font-family:var(--font-display); font-size:.82rem; font-weight:600;
+  color:var(--muted-dark); display:block;
+}
+.biz-extra label span{ opacity:.7; font-weight:500 }
+.biz-extra input{
+  width:100%; min-height:48px; padding:.7rem 1rem;
+  border:1.5px solid var(--line-dark); border-radius:12px;
+  background:var(--ink-2); color:var(--cream);
+  font-family:var(--font-display); font-size:1rem;
+  transition:border-color var(--dur) var(--ease);
+}
+.biz-extra input::placeholder{ color:var(--muted-dark); opacity:1 }
+.biz-extra input:focus{ border-color:var(--gold) }
+.biz-mail{
+  margin-top:var(--s-6); font-family:var(--font-display); font-size:.95rem;
+  color:var(--muted-dark);
+}
+.biz-mail a, .biz-mail [data-mail]{
+  color:var(--cream); text-decoration:none;
+  border-bottom:2px solid var(--gold); padding-bottom:2px;
+  display:inline-block; min-height:32px;
+}
+.biz-mail a:hover{ border-bottom-color:var(--cream) }
+
+/* --- deploy grid (business.html) ---------------------------------
+   This replaced a class called .also whose rules were deleted along with
+   the section that used to carry them. Unstyled, the icons had no width
+   and filled their cards.                                            */
+.deploy-grid{
+  display:grid; gap:var(--s-4);
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+}
+.deploy-grid > div{
+  background:var(--paper); border:1px solid var(--line);
+  border-radius:var(--radius); padding:var(--s-5);
+}
+.deploy-grid .ico{
+  width:26px; height:26px; flex:none;
+  color:var(--sage); margin-bottom:var(--s-3);
+}
+.deploy-grid b{
+  font-family:var(--font-display); font-weight:700;
+  display:block; letter-spacing:-.01em;
+}
+.deploy-grid p{ color:var(--muted); font-size:.94rem; margin-top:.25rem }

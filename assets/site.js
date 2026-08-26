@@ -147,6 +147,23 @@
     syncNav();
   });
 
+  /* ---------- email addresses ----------
+     The address is stored reversed so no address-shaped string sits in the
+     markup for a harvester to regex out, and is assembled here into a real
+     mailto link. Anyone running a scraper with a JS engine will still get it;
+     this only stops the naive ones. Without JS the readable "sales at canary
+     dot earth" text stays, which a person can still use.              */
+  document.querySelectorAll("[data-mail]").forEach(function(el){
+    var parts = el.getAttribute("data-mail").split("").reverse().join("").split(":");
+    if(parts.length !== 2) return;
+    var addr = parts[0] + String.fromCharCode(64) + parts[1];
+    var a = document.createElement("a");
+    a.href = "mailto:" + addr;
+    a.textContent = addr;
+    a.className = el.className;
+    el.parentNode.replaceChild(a, el);
+  });
+
   /* ---------- spec groups ----------
      Ships open in the HTML, so with JS off every group is readable. On
      narrow screens all but the flagged ones collapse; crossing the
