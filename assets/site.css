@@ -531,14 +531,6 @@ a{ color:inherit }
 
 /* --- enterprise ------------------------------------------------- */
 .dark .split-media img{ box-shadow:0 30px 70px rgb(0 0 0 / .45) }
-.ent-stat{
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-  gap:var(--s-5); margin-top:var(--s-7);
-  border-top:1px solid var(--line-dark); padding-top:var(--s-6);
-}
-.ent-stat b{ font-family:var(--font-mono); font-size:1.55rem; display:block; color:var(--gold) }
-.ent-stat span{ font-family:var(--font-display); font-size:.85rem; color:var(--muted-dark); display:block; margin-top:.2rem }
-
 /* --- pricing ---------------------------------------------------- */
 .price-card{
   max-width:38rem; margin-inline:auto; background:var(--paper);
