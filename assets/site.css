@@ -279,21 +279,51 @@ a{ color:inherit }
 
 /* --- spec strip ------------------------------------------------- */
 .specs{ border-block:1px solid var(--line); background:var(--paper) }
-.specs ul{
-  list-style:none; margin:0; padding:var(--s-5) 0;
-  display:grid; grid-template-columns:repeat(2,1fr); gap:var(--s-4) var(--s-3);
+/* One row at every width. When the seven items fit they sit centred and
+   still; when they would overflow, the row scrolls rather than wrapping and
+   the edges are masked so items fade out instead of being cut off. */
+.specs-viewport{ position:relative; overflow:hidden }
+.specs-viewport.is-marquee{
+  -webkit-mask-image:linear-gradient(to right, transparent, #000 3rem, #000 calc(100% - 3rem), transparent);
+          mask-image:linear-gradient(to right, transparent, #000 3rem, #000 calc(100% - 3rem), transparent);
 }
-@media (min-width:640px){ .specs ul{ grid-template-columns:repeat(4,1fr) } }
-@media (min-width:1024px){ .specs ul{ grid-template-columns:repeat(7,1fr) } }
-.specs li{ text-align:center }
+.specs-track{
+  list-style:none; margin:0; padding:var(--s-3) 0;
+  display:flex; flex-wrap:nowrap; width:max-content;
+  gap:0;
+}
+/* the row fits: centre it and leave it alone */
+.specs-track.is-static{ width:100%; justify-content:center }
+.specs-track.is-running{
+  animation:marquee var(--marquee-duration, 40s) linear infinite;
+}
+/* a pointer over the strip, or keyboard focus inside it, holds it still */
+.specs-viewport:hover .specs-track.is-running,
+.specs-viewport:focus-within .specs-track.is-running{ animation-play-state:paused }
+@keyframes marquee{
+  from{ transform:translateX(0) }
+  to{ transform:translateX(calc(-1 * var(--marquee-distance, 0px))) }
+}
+.specs li{
+  text-align:center; flex:0 0 auto;
+  padding-inline:clamp(1.1rem, 3.4vw, 2.4rem);
+}
+/* a hairline between items so the row reads as a list, not a sentence */
+.specs li + li{ border-left:1px solid var(--line) }
+
+/* No animation: keep the fade as an overflow hint, scroll it by hand. */
+@media (prefers-reduced-motion: reduce){
+  .specs-viewport{ overflow-x:auto; scrollbar-width:thin }
+  .specs-track{ animation:none !important }
+}
 .specs b{
-  display:block; font-family:var(--font-mono); font-size:.95rem;
-  font-weight:700; letter-spacing:.02em;
+  display:block; font-family:var(--font-mono); font-size:.9rem;
+  font-weight:700; letter-spacing:.02em; line-height:1.2;
 }
 .specs span{
-  display:block; font-family:var(--font-display); font-size:.72rem;
+  display:block; font-family:var(--font-display); font-size:.7rem;
   font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); margin-top:.2rem;
+  color:var(--muted); line-height:1.2; margin-top:.15rem;
 }
 
 /* --- generic media + text split --------------------------------- */
@@ -461,11 +491,6 @@ a{ color:inherit }
 .spec-cols{ display:grid; gap:0 }
 @media (min-width:860px){ .spec-cols{ grid-template-columns:repeat(2,1fr); gap:0 var(--s-8) } }
 .spec-group dl{ margin:0; padding:0 var(--s-2) var(--s-5) }
-/* keeps the mobile default from flashing open before the script runs;
-   removed the moment JS marks the group ready */
-@media (max-width:859px){
-  .js [data-spec-groups]:not([data-ready]) details:not([data-open-mobile]) > :not(summary){ display:none }
-}
 .spec-group dl > div{
   display:flex; gap:var(--s-5); justify-content:space-between; align-items:baseline;
   padding:.6rem 0; border-bottom:1px solid var(--line);
@@ -781,23 +806,23 @@ a{ color:inherit }
 }
 .deploy-grid p{ color:var(--muted); font-size:.94rem; margin-top:.25rem }
 
-/* --- why-a-trend cards (index.html) ------------------------------- */
-.why-grid{
-  list-style:none; margin:0; padding:0; display:grid; gap:var(--s-4);
-  grid-template-columns:1fr;
-}
-/* six cards, so fix the count rather than letting auto-fit land on four and
-   leave a row of two */
-@media (min-width:640px){  .why-grid{ grid-template-columns:repeat(2,1fr) } }
-@media (min-width:1000px){ .why-grid{ grid-template-columns:repeat(3,1fr) } }
-.why-grid li{
+/* --- "what each measurement tells you" rail (index.html) ---------- */
+/* Same rail mechanics as the testimonials, so one carousel behaviour covers
+   both: scroll-snap, keyboard scrolling, prev/next that disable at the ends. */
+.why-card{
   background:var(--paper); border:1px solid var(--line);
   border-left:3px solid var(--gold);
-  border-radius:var(--radius); padding:var(--s-5);
+  border-radius:var(--radius-lg); padding:var(--s-6);
+  display:flex; flex-direction:column; gap:var(--s-3);
+  flex:0 0 82%; max-width:420px; scroll-snap-align:start;
 }
-.why-grid h3{ font-size:1.06rem; line-height:1.25; margin-bottom:var(--s-3) }
-.why-grid p{ color:var(--muted); font-size:.97rem }
+@media (min-width:700px){  .why-card{ flex-basis:46% } }
+@media (min-width:1050px){ .why-card{ flex-basis:31% } }
+.why-card .sensor-tag{ margin-bottom:0 }
+.why-card h3{ font-size:1.12rem; line-height:1.25 }
+.why-card p{ color:var(--muted); font-size:.97rem; margin:0 }
 .why-note{
   max-width:54rem; margin:clamp(var(--s-6),4vw,var(--s-7)) auto 0;
   text-align:center; color:var(--muted); font-size:.98rem;
 }
+
