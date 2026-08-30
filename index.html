@@ -134,15 +134,16 @@
 
 <!-- ============================ SPECS ============================= -->
 <section class="specs" aria-label="What Canary measures">
-  <div class="wrap">
-    <ul>
+  <div class="specs-viewport" data-marquee>
+    <ul class="specs-track">
+	  <li><b>PM<sub>1.0</sub></b><span>Smoke</span></li>
       <li><b>PM<sub>2.5</sub></b><span>Particulates</span></li>
       <li><b>PM<sub>10</sub></b><span>Coarse dust</span></li>
       <li><b>CO<sub>2</sub></b><span>Stale air</span></li>
-      <li><b>UV&#8209;B</b><span>240&ndash;320&nbsp;nm</span></li>
-      <li><b>&deg;C&nbsp;/&nbsp;&deg;F</b><span>Temperature</span></li>
-      <li><b>%RH</b><span>Humidity</span></li>
-      <li><b>kPa</b><span>Pressure</span></li>
+      <li><b><sub></sub>UV&#8209;B</b><span>240&ndash;320&nbsp;nm</span></li>
+      <li><b><sub></sub>&deg;C&nbsp;/&nbsp;&deg;F</b><span>Temperature</span></li>
+      <li><b><sub></sub>%RH</b><span>Humidity</span></li>
+      <li><b><sub></sub>kPa&nbsp;/&nbsp;inHg</b><span>Pressure</span></li>
     </ul>
   </div>
 </section>
@@ -150,43 +151,68 @@
 <!-- ============================ WHY =============================== -->
 <section class="section band" id="why" aria-labelledby="why-h">
   <div class="wrap">
-    <div class="section-head reveal">
-      <p class="eyebrow">Why a trend and not a number</p>
-      <h2 id="why-h">One reading tells you nothing.</h2>
-      <p class="lede">Any monitor can show you 812 ppm. But that number is useless without context. Is it the top of a climb, or the bottom of one? Was someone frying bacon an hour ago, or did the window just blow open? That context is what the 24&#8209;hour trace gives you, and why Canary keeps one for every single sensor.</p>
+    <div class="carousel-head carousel-head--center reveal">
+      <div class="section-head" style="margin-bottom:0">
+        <p class="eyebrow">New to air monitors</p>
+        <h2 id="why-h">What each measurement actually tells you.</h2>
+        <p class="lede">None of it is visible, and a single number would not settle much anyway:
+          812&nbsp;ppm is neither good nor bad until you know whether it is climbing or falling.
+          So Canary keeps the last 24&nbsp;hours of every measurement on screen. Here is what
+          each one is, and why it is worth watching.</p>
+      </div>
+      <div class="carousel-nav">
+        <button type="button" data-rail-prev="whyRail" aria-controls="whyRail"><span class="visually-hidden">Previous measurement</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <button type="button" data-rail-next="whyRail" aria-controls="whyRail"><span class="visually-hidden">Next measurement</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+        </button>
+      </div>
     </div>
+  </div>
 
-    <ul class="why-grid reveal">
-        <li>
-          <h3>Is this room making me sleepy?</h3>
-          <p>Shut a door on six people and CO<sub>2</sub> climbs steadily. Watching it pass 1,400&nbsp;ppm during a long meeting answers a question you would otherwise blame on yourself.</p>
-        </li>
-        <li>
-          <h3>Why do I wake up groggy?</h3>
-          <p>A bedroom with the door closed loads up overnight. The curve shows the climb hour by hour, along with how warm and how dry the room got while you slept.</p>
-        </li>
-        <li>
-          <h3>Did dinner really do that?</h3>
-          <p>Frying puts particulates up within minutes. What matters is the shape afterwards: a spike that clears in twenty minutes means your extractor works. One that lingers for three hours means it does not.</p>
-        </li>
-        <li>
-          <h3>Is the smoke getting in?</h3>
-          <p>When there is wildfire smoke outside, indoor particulates follow it with a lag. Seeing your own indoor line start to rise is the difference between guessing about the windows and knowing.</p>
-        </li>
-        <li>
-          <h3>Is the purifier doing anything?</h3>
-          <p>Turn it on and watch. If the particulate line falls, it is working. If the trace does not move, you have learned something the box was never going to tell you.</p>
-        </li>
-        <li>
-          <h3>Why does my head hurt before it rains?</h3>
-          <p>Barometric pressure drops ahead of a weather front, often a day early. The curve turns a pattern you may only have suspected into something you can point at.</p>
-        </li>
-    </ul>
+  <div class="rail" id="whyRail" data-rail tabindex="0" role="region" aria-label="What Canary measures and why: scrollable cards">
+    <article class="why-card reveal">
+      <span class="sensor-tag">Carbon dioxide</span>
+      <h3>The stuffiness you cannot smell.</h3>
+      <p>You breathe it out, and behind a shut door it has nowhere to go. Outdoor air sits near 420&nbsp;ppm; a closed bedroom or a full meeting room passes 1,000&nbsp;ppm easily, which is roughly where people start reporting stuffiness and poor concentration. There is nothing to smell. Canary shows the climb, and how fast an open door undoes it.</p>
+    </article>
 
-    <p class="why-note reveal">Canary does not treat, prevent or fix any of this, and it does not
-      clean your air. It measures, and it keeps the last day on screen so you can see the shape
-      instead of a single number. What to do about it stays with you: open a window, run the fan,
-      change a filter, or decide it is fine.</p>
+    <article class="why-card reveal">
+      <span class="sensor-tag">Particulate matter</span>
+      <h3>Smoke and dust too small to see.</h3>
+      <p>Particles smaller than 2.5 micrometres reach deep into the lungs: wildfire smoke, pollen, road dust. The World Health Organization&rsquo;s guideline is 15&nbsp;&micro;g/m&sup3;, and frying a steak can take a kitchen past it. What matters is the recovery: a spike that clears in twenty minutes means your extractor works; three hours means it does not.</p>
+    </article>
+
+    <article class="why-card reveal">
+      <span class="sensor-tag">Relative humidity</span>
+      <h3>Too dry, too damp, and the narrow band between.</h3>
+      <p>Below about 30% and skin, sinuses and wooden instruments all start to complain. Above 60% and you are inviting mould and dust mites. Canary shows which way your rooms drift over a day, and how far.</p>
+    </article>
+
+    <article class="why-card reveal">
+      <span class="sensor-tag">Temperature</span>
+      <h3>Your thermostat is measuring the hallway.</h3>
+      <p>One number for a whole home hides a lot: a nursery on an outside wall, a top&#8209;floor bedroom in August. Sleep researchers tend to point at 16 to 19&nbsp;&deg;C for a bedroom, cooler than most people keep them. Canary reads the room it is actually in, and keeps the overnight curve.</p>
+    </article>
+
+    <article class="why-card reveal">
+      <span class="sensor-tag">Ambient pressure</span>
+      <h3>Weather you feel before you see it.</h3>
+      <p>Barometric pressure falls ahead of a weather front, often a day before the rain arrives. Plenty of people with migraines or aching joints say they can tell; what they have never been able to do is check. Canary keeps the curve, so a suspicion becomes something you can point at.</p>
+    </article>
+
+    <article class="why-card reveal">
+      <span class="sensor-tag">Ultraviolet</span>
+      <h3>Sunburn has little to do with brightness.</h3>
+      <p>UV&#8209;B is the narrow band, 240 to 320&nbsp;nm, that burns skin and drives vitamin&nbsp;D. It has little to do with how bright a day looks: a cool overcast afternoon can carry most of the ultraviolet of a clear one, and a sunny window blocks nearly all of it. Canary reads that band itself.</p>
+    </article>
+  </div>
+
+  <div class="wrap">
+    <p class="why-note reveal">Canary measures. It does not treat, prevent or fix any of this,
+      and it does not clean your air. It keeps the last day on screen so you can see the shape
+      rather than a single number; what to do about it stays with you.</p>
   </div>
 </section>
 
@@ -340,33 +366,33 @@
       <div class="rd-caps">
         <div class="rd-cap" data-cap="0" data-active>
           <span class="sensor-tag">Particulate matter</span>
-          <h3>It smells smoke before you do.</h3>
-          <p>A dual&#8209;laser sensor counts particles from wildfire smoke, pollen, mold. The greys in the trace are the size bands themselves, PM<sub>1.0</sub> through PM<sub>2.5</sub> to PM<sub>10</sub>, so you are seeing not just how much is in the air but how big it is. That is what separates kitchen grease from road dust from smoke drifting in off a fire.</p>
+          <h3>It counts particles by size.</h3>
+          <p>A dual&#8209;laser sensor sorts what it finds into size bands, PM<sub>1.0</sub> through PM<sub>2.5</sub> to PM<sub>10</sub>. Those bands are the greys in the trace, so the screen shows not just how much is in the air but how big it is. That is what separates kitchen grease from road dust from smoke drifting in off a fire.</p>
         </div>
         <div class="rd-cap" data-cap="1">
           <span class="sensor-tag">Carbon dioxide</span>
-          <h3>Watch a closed room go stale.</h3>
-          <p>A Swiss laser&#8209;based CO<sub>2</sub> sensor, accurate enough to count how many people walked into a room. On this trace the line climbs all night behind a closed door and falls off a cliff the moment it opens.</p>
+          <h3>Sensitive enough to count the room.</h3>
+          <p>A Swiss laser&#8209;based CO<sub>2</sub> sensor, accurate enough that you can see how many people walked in. On this trace the line climbs all night behind a closed door and falls off a cliff the moment it opens.</p>
         </div>
         <div class="rd-cap" data-cap="2">
           <span class="sensor-tag">Temperature</span>
-          <h3>The microclimate your thermostat misses.</h3>
-          <p>Your hallway thermostat does not know what the nursery does at 4am, or how hot the conservatory gets by noon. The layout is yours to arrange, too; this one keeps a note from a colleague pinned beside the curve.</p>
+          <h3>The screen is yours to arrange.</h3>
+          <p>Readings do not have to fill the whole display. This one gives up part of the screen to a note pinned beside the curve, which is the sort of thing e&#8209;paper is good for: it costs nothing to leave sitting there for a week.</p>
         </div>
         <div class="rd-cap" data-cap="3">
           <span class="sensor-tag">Relative humidity</span>
-          <h3>Too dry, too damp, and the narrow band between.</h3>
-          <p>Below about 30% and skin, sinuses and wooden instruments all start to complain. Above 60% and you are inviting mould and dust mites. Canary shows which way your rooms drift over a day, and how far.</p>
+          <h3>Reading the room, not the board.</h3>
+          <p>Humidity is easy to get wrong, because electronics make their own heat and dry the air immediately around them. This sensor sits vented and set apart from the warm side of the board. The curve here runs from 43 to 61% across a single day.</p>
         </div>
         <div class="rd-cap" data-cap="4">
           <span class="sensor-tag">Ambient pressure</span>
-          <h3>Weather you can feel coming.</h3>
-          <p>A falling barometer arrives hours before the storm does, and often before the headache or the aching joint that comes with it. Canary keeps the curve, so a pattern you had only suspected becomes something you can point at.</p>
+          <h3>A full day of barometer.</h3>
+          <p>Most barometers give you a number and a weather symbol. This one plots the whole day, so you see the slope rather than a snapshot, with an illustration that follows the trend and the reading in kilopascals underneath.</p>
         </div>
         <div class="rd-cap" data-cap="5">
           <span class="sensor-tag">Ultraviolet &amp; light</span>
           <h3>Sunlight, measured twice.</h3>
-          <p>A true UV&#8209;B sensor reads the 240&ndash;320&nbsp;nm band that actually burns skin, rather than estimating it from visible light the way most consumer sensors do. Luminosity sits on the same screen, so you can watch a room brighten and the burn risk climb side by side, and see for yourself that a bright day is not automatically a harmful one.</p>
+          <p>A true UV&#8209;B sensor, reading the 240&ndash;320&nbsp;nm band directly rather than estimating it from visible light the way most consumer sensors do. Luminosity shares the screen, so the two curves sit side by side and you can watch them disagree.</p>
         </div>
         <div class="rd-cap" data-cap="6">
           <span class="sensor-tag">Photo viewer</span>
@@ -587,9 +613,10 @@
       <p class="lede">Seven sensor modules, one e&#8209;paper screen, and a battery that charges over the same USB&#8209;C cable as everything else you own.</p>
     </div>
 
-    <div class="spec-cols reveal" data-spec-groups>
+    <div class="spec-cols reveal">
       <div class="disclosure">
-        <details class="spec-group" data-open-mobile open>
+        <!-- Display is the only group open by default, at every width. -->
+        <details class="spec-group" open>
           <summary><h3>Display</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Type</dt><dd>E&#8209;paper, monochrome</dd></div>
@@ -600,7 +627,7 @@
           </dl>
         </details>
 
-        <details class="spec-group" data-open-mobile open>
+        <details class="spec-group">
           <summary><h3>Power</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Battery</dt><dd>2000 mAh Li&#8209;po</dd></div>
@@ -611,7 +638,7 @@
           </dl>
         </details>
 
-        <details class="spec-group" open>
+        <details class="spec-group">
           <summary><h3>Connectivity &amp; storage</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Wireless</dt><dd>Wi&#8209;Fi, Bluetooth</dd></div>
@@ -625,7 +652,7 @@
           </dl>
         </details>
 
-        <details class="spec-group" open>
+        <details class="spec-group">
           <summary><h3>Physical</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Dimensions</dt><dd>110 &times; 67 &times; 18 mm</dd></div>
@@ -637,7 +664,7 @@
       </div>
 
       <div class="disclosure">
-        <details class="spec-group" open>
+        <details class="spec-group">
           <summary><h3>Particulates</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Mass concentration</dt><dd>PM<sub>1.0</sub> &middot; PM<sub>2.5</sub> &middot; PM<sub>4.0</sub> &middot; PM<sub>10</sub></dd></div>
@@ -649,7 +676,7 @@
           </dl>
         </details>
 
-        <details class="spec-group" open>
+        <details class="spec-group">
           <summary><h3>Air &amp; climate</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Carbon dioxide</dt><dd>ppm, NDIR</dd></div>
@@ -663,7 +690,7 @@
           </dl>
         </details>
 
-        <details class="spec-group" open>
+        <details class="spec-group">
           <summary><h3>Light</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>Ultraviolet</dt><dd>UV&#8209;B, 240&ndash;320 nm</dd></div>
@@ -671,7 +698,7 @@
           </dl>
         </details>
 
-        <details class="spec-group" open>
+        <details class="spec-group">
           <summary><h3>On screen</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
           <dl>
             <div><dt>History</dt><dd>24 h per reading</dd></div>
@@ -682,7 +709,7 @@
       </div>
     </div>
 
-    <p class="spec-note">Sensor modules sourced from Switzerland, Germany and Korea. Every one of them is a replaceable part.</p>
+    <!--<p class="spec-note">Sensor modules sourced from Switzerland, Germany and Korea. Every one of them is a replaceable part.</p> -->
   </div>
 </section>
 
