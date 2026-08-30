@@ -780,3 +780,24 @@ a{ color:inherit }
   display:block; letter-spacing:-.01em;
 }
 .deploy-grid p{ color:var(--muted); font-size:.94rem; margin-top:.25rem }
+
+/* --- why-a-trend cards (index.html) ------------------------------- */
+.why-grid{
+  list-style:none; margin:0; padding:0; display:grid; gap:var(--s-4);
+  grid-template-columns:1fr;
+}
+/* six cards, so fix the count rather than letting auto-fit land on four and
+   leave a row of two */
+@media (min-width:640px){  .why-grid{ grid-template-columns:repeat(2,1fr) } }
+@media (min-width:1000px){ .why-grid{ grid-template-columns:repeat(3,1fr) } }
+.why-grid li{
+  background:var(--paper); border:1px solid var(--line);
+  border-left:3px solid var(--gold);
+  border-radius:var(--radius); padding:var(--s-5);
+}
+.why-grid h3{ font-size:1.06rem; line-height:1.25; margin-bottom:var(--s-3) }
+.why-grid p{ color:var(--muted); font-size:.97rem }
+.why-note{
+  max-width:54rem; margin:clamp(var(--s-6),4vw,var(--s-7)) auto 0;
+  text-align:center; color:var(--muted); font-size:.98rem;
+}
