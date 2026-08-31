@@ -49,6 +49,10 @@
 }
 
 *,*::before,*::after{ box-sizing:border-box }
+/* The UA gives <figure> `margin: 1em 40px`. Rail cards are figures, so
+   that 40px each side ate the sliver of the next card that tells a reader
+   the row scrolls. Every figure on the site is a rail card, so zero it. */
+figure{ margin:0 }
 html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; scroll-padding-top:5.5rem }
 body{
   margin:0; background:var(--cream); color:var(--ink);
