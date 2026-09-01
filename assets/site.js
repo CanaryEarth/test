@@ -170,6 +170,7 @@
     }
 
     function build(){
+      lastWidth = viewport.clientWidth;
       clones.forEach(function(c){ c.remove(); });
       clones = [];
       track.classList.remove("is-running");
@@ -207,8 +208,15 @@
       track.classList.add("is-running");
     }
 
-    var t;
+    var t, lastWidth = -1;
+    /* Only width matters here: the clone count, the distance and the duration
+       are all derived from widths. Height must be ignored, because mobile
+       browsers fire resize every time the URL bar slides in or out during a
+       scroll. Rebuilding on that re-adds .is-running, which restarts the
+       animation at translateX(0), and the row visibly snaps back to the start
+       the moment the reader lifts their finger. */
     window.addEventListener("resize", function(){
+      if(Math.abs(viewport.clientWidth - lastWidth) <= 1) return;
       window.clearTimeout(t);
       t = window.setTimeout(build, 200);
     }, { passive:true });

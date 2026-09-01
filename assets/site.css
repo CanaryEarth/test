@@ -375,7 +375,18 @@ a{ color:inherit }
 .carousel-nav button:hover:not([disabled]){ background:var(--ink); color:var(--cream) }
 .carousel-nav button[disabled]{ opacity:.3; cursor:not-allowed }
 .rail{
-  display:flex; gap:var(--s-4); overflow-x:auto; scroll-snap-type:x proximity;
+  display:flex; gap:var(--s-4); overflow-x:auto;
+  /* overflow-x:auto alone computes overflow-y to auto rather than visible, so
+     anything poking a fraction of a pixel past the box raises a vertical
+     scrollbar on what is meant to be a horizontal rail. Two things do that
+     here: .reveal parks cards at translateY(18px) until they are revealed and
+     a transform counts toward scrollable overflow (18px against 16px of
+     padding below leaves 2px), and the card heights are fractional (485.98px
+     in a 486px box), which rounds the same way. The lifestyle rail escaped it
+     only because its cards carry no .reveal. Pin the axis shut instead of
+     chasing the arithmetic: nothing in a rail should ever scroll upward. */
+  overflow-y:hidden;
+  scroll-snap-type:x proximity;
   scroll-behavior:smooth; padding-bottom:var(--s-4);
   align-items:stretch;
   scrollbar-width:thin; scrollbar-color:var(--line) transparent;
@@ -664,13 +675,21 @@ a{ color:inherit }
 }
 .tl-item{ position:relative; padding-left:2.5rem; padding-bottom:clamp(var(--s-7),6vw,var(--s-9)) }
 .tl-item:last-child{ padding-bottom:0 }
-.tl-item::before{
-  content:""; position:absolute; left:-1px; top:.45rem;
+/* The dot marks the middle of the photo, so it hangs off .tl-media, whose box
+   is exactly the image. Anchoring it to .tl-item instead needs a magic number
+   on mobile (the image height scales with the viewport, so one number is right
+   at exactly one width) and lands low on desktop, because top:50% there
+   resolves against the padding box, which includes the gap to the next entry.
+   top:50% of .tl-media is the image midpoint at every width and any aspect
+   ratio. Only the horizontal offset changes per breakpoint. */
+.tl-media{ margin-top:var(--s-5); position:relative }
+.tl-media::before{
+  content:""; position:absolute; top:50%; margin-top:-10px;
+  left:calc(-2.5rem - 1px);        /* back out over .tl-item's padding-left */
   width:14px; height:14px; border-radius:50%;
   background:var(--gold); border:3px solid var(--cream); box-sizing:content-box;
 }
-.band .tl-item::before{ border-color:var(--cream-2) }
-.tl-media{ margin-top:var(--s-5) }
+.band .tl-media::before{ border-color:var(--cream-2) }
 .tl-media img{
   width:100%; border-radius:var(--radius-lg); box-shadow:var(--shadow-md);
   aspect-ratio:3/2; object-fit:cover; background:var(--cream-2);
@@ -699,8 +718,11 @@ a{ color:inherit }
     display:grid; grid-template-columns:1fr 1fr; align-items:center;
     column-gap:var(--s-8); padding-left:0;
   }
-  .tl-item::before{ left:50%; top:50%; margin:-7px 0 0 -10px }
   .tl-media{ margin-top:0 }
+  /* the spine sits at the centre of the item, which is half a column-gap
+     away from whichever edge of the photo faces it */
+  .tl-item:nth-child(odd)  .tl-media::before{ left:calc(100% + var(--s-8) / 2 - 10px) }
+  .tl-item:nth-child(even) .tl-media::before{ left:calc(var(--s-8) / -2 - 10px) }
   /* alternate: odd entries put the photo on the left, even on the right */
   .tl-item:nth-child(even) .tl-media{ grid-column:2; grid-row:1 }
   .tl-item:nth-child(even) .tl-body{ grid-column:1; grid-row:1; text-align:right }
