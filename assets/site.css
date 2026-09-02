@@ -502,6 +502,117 @@ a{ color:inherit }
   .js .rd-count{ display:block }
 }
 
+/* --- annotated 3D model (index.html) ----------------------------- */
+/* Labels hold still off to the sides and a leader line tracks the point on
+   the device, rather than the label riding the point around the screen. The
+   anchors themselves draw nothing: model-viewer positions them, site.js reads
+   where they landed, and the SVG below draws the line. A label and its line
+   fade together the moment its part rotates behind the device, which
+   model-viewer signals by dropping the data-visible attribute. */
+.model-stage{
+  position:relative; max-width:62rem; margin:0 auto var(--s-7);
+  aspect-ratio:16/9;
+}
+/* The viewer fills the stage. It does not need to be inset to protect page
+   scrolling, because touch-action="pan-y" already lets a vertical swipe
+   through to the page; only a sideways drag turns the device. Filling the
+   stage is what lets the render be as large as it is.
+
+   The shadow is a CSS drop-shadow rather than model-viewer's own ground
+   shadow. model-viewer casts onto a horizontal plane at the foot of the
+   model, which is a floor the reader is looking across; drop-shadow works
+   off the rendered alpha silhouette and lands on the page itself, so the
+   page becomes the surface and the device reads as floating just above it.
+   Because it is computed from the silhouette, it follows the model through
+   every rotation for free. */
+.model-stage model-viewer{
+  position:absolute; inset:0; width:100%; height:100%;
+  background:transparent; --poster-color:transparent;
+  filter:drop-shadow(60px 33px 20px rgb(30 32 34 / .26));
+}
+@media (max-width:700px){
+  /* a phone is held below the eye, so the light reads as higher up */
+  /* .model-stage model-viewer{ filter:drop-shadow(0 12px 15px rgb(30 32 34 / .28)) } */
+}
+@media (prefers-reduced-motion: reduce){
+  .model-stage model-viewer{ filter:none }
+}
+.mv-anchor{
+  width:0; height:0; padding:0; margin:0; border:0;
+  background:none; pointer-events:none;
+}
+.model-lines{
+  position:absolute; inset:0; width:100%; height:100%;
+  pointer-events:none; overflow:visible;
+}
+.model-lines line{
+  stroke:var(--line); stroke-width:1; opacity:0;
+  transition:opacity 260ms var(--ease);
+}
+.model-lines line.is-on{ opacity:1 }
+.model-labels{ list-style:none; margin:0; padding:0 }
+.model-label{
+  position:absolute; top:var(--ly); transform:translateY(-50%);
+  max-width:22%; font-family:var(--font-display); font-weight:600;
+  font-size:clamp(.82rem, 1.7vw, .98rem); line-height:1.3;
+  letter-spacing:.01em; color:var(--ink);
+  opacity:0; transition:opacity 260ms var(--ease); pointer-events:none;
+}
+.model-label.is-on{ opacity:1 }
+.model-label--left{  left:0;  text-align:right }
+.model-label--right{ right:0; text-align:left }
+/* Resting slots. These live here rather than inline on the elements so the
+   mobile block below can move them; an inline style would outrank it. */
+/* These two sit on the back of the device, so they only ever appear in a
+   rotated view where left and right are mirrored. Their sides are assigned
+   for that view, not for the front, which is what stops the leader lines
+   crossing over each other. */
+.model-label[data-for="hotspot-9"]{  --ly:17% }   /* UV-B,    right */
+.model-label[data-for="hotspot-1"]{  --ly:38% }   /* screen,  right */
+.model-label[data-for="hotspot-6"]{  --ly:60% }   /* inlet,   right */
+.model-label[data-for="hotspot-4"]{  --ly:78% }   /* reset,   right */
+.model-label[data-for="hotspot-10"]{ --ly:15% }   /* touch,   left  */
+.model-label[data-for="hotspot-8"]{  --ly:60% }   /* USB-C,   left  */
+.model-label[data-for="hotspot-3"]{  --ly:80% }   /* microSD, left  */
+/* nothing shows until the component has upgraded and the model has loaded */
+.model-stage:not(.is-ready) .model-label,
+.model-stage:not(.is-ready) .model-lines{ opacity:0 }
+.model-hint{
+  position:absolute; left:50%; bottom:0; transform:translateX(-50%);
+  margin:0; font-family:var(--font-mono); font-size:.68rem;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
+  opacity:0; transition:opacity 400ms var(--ease);
+}
+.model-stage.is-ready .model-hint{ opacity:1 }
+.model-stage.is-touched .model-hint{ opacity:0 }
+
+@media (max-width:700px){
+  /* taller than it is wide, so the labels have vertical room to separate,
+     and a deep inert band top and bottom so a thumb there scrolls the page.
+     Full-bleed out of .wrap, because on a phone the 20px of page gutter is
+     width the render cannot spare. */
+  .model-stage{
+    aspect-ratio:4/5;
+    width:100vw; margin-inline:calc(50% - 50vw);
+  }
+  .model-label{ max-width:34%; font-size:.78rem }
+  .model-label--left{  left:var(--s-3) }
+  .model-label--right{ right:var(--s-3) }
+  /* On a phone the labels move out of the device's own horizontal band and
+     sit above and below it instead. Beside it, they capped how large the
+     render could be: every extra pixel of device was a pixel taken off a
+     label. The device occupies roughly 35% to 66% of the stage vertically at
+     this radius, so these slots clear it with room to spare and the render is
+     free to be as wide as the stage. */
+  .model-label[data-for="hotspot-9"]{  --ly:7%  }  /* UV-B,    right */
+  .model-label[data-for="hotspot-1"]{  --ly:20% }  /* screen,  right */
+  .model-label[data-for="hotspot-6"]{  --ly:80% }  /* inlet,   right */
+  .model-label[data-for="hotspot-4"]{  --ly:93% }  /* reset,   right */
+  .model-label[data-for="hotspot-10"]{ --ly:7%  }  /* touch,   left  */
+  .model-label[data-for="hotspot-8"]{  --ly:80% }  /* USB-C,   left  */
+  .model-label[data-for="hotspot-3"]{  --ly:93% }  /* microSD, left  */
+}
+
 /* --- spec table ------------------------------------------------- */
 .spec-cols{ display:grid; gap:0 }
 @media (min-width:860px){ .spec-cols{ grid-template-columns:repeat(2,1fr); gap:0 var(--s-8) } }

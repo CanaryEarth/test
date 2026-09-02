@@ -228,6 +228,158 @@
     build();
   });
 
+  /* ---------- annotated 3D model ----------
+     model-viewer is ~300KB of script and the glb is 1.4MB, so neither is
+     fetched until the stage is close to the viewport. Once it is up, every
+     camera change re-reads where each anchor landed on screen and redraws its
+     leader line; the labels themselves never move.                      */
+  (function(){
+    var stage = document.querySelector("[data-model-stage]");
+    if(!stage) return;
+    var mv = stage.querySelector("model-viewer");
+    var svg = stage.querySelector(".model-lines");
+    var labels = [].slice.call(stage.querySelectorAll(".model-label"));
+    if(!mv || !svg || !labels.length) return;
+
+    var SRC = "https://ajax.googleapis.com/ajax/libs/model-viewer/4.3.1/model-viewer.min.js";
+    var NS = "http://www.w3.org/2000/svg";
+
+    /* one line per label, paired by the slot it points at */
+    var pairs = labels.map(function(label){
+      var line = document.createElementNS(NS, "line");
+      svg.appendChild(line);
+      return { label:label, line:line,
+               anchor:mv.querySelector('[slot="' + label.dataset.for + '"]') };
+    }).filter(function(p){ return p.anchor; });
+
+    /* Rotation is completely free: yaw and pitch both, all the way round.
+       Nothing can be cropped anyway, because the camera is placed so the
+       model's bounding sphere fits the frame whichever way it is turned.
+
+       The device is 110 x 67 x 18mm, so its diagonal is 130mm and the sphere
+       that contains it has a 65mm radius. A sphere of radius R at distance r
+       subtends 2*asin(R/r), so asking it to fill at most 85% of the narrower
+       field of view fixes r. The vertical field of view is 30 degrees and the
+       horizontal one follows the box aspect, which is why a wide desktop
+       stage can hold the camera closer than a tall phone one: on a phone the
+       horizontal is the tighter of the two.
+
+       Zoom stays disabled, so this radius is also pinned as the whole of the
+       allowed orbit range.                                                */
+    var SPHERE = 0.065;                       /* metres */
+    var VFOV = 30 * Math.PI / 180;
+    var FILL = 0.85;                          /* leave 15% as breathing room */
+    var lastRadius = 0;
+
+    function frame(){
+      var w = mv.clientWidth, h = mv.clientHeight;
+      if(!w || !h) return;
+      var hfov = 2 * Math.atan(Math.tan(VFOV / 2) * (w / h));
+      var half = Math.min(VFOV, hfov) * FILL / 2;
+      var radius = SPHERE / Math.sin(half);
+      if(Math.abs(radius - lastRadius) < 0.002) return;
+      lastRadius = radius;
+      var r = radius.toFixed(3) + "m";
+      mv.setAttribute("min-camera-orbit", "auto auto " + r);
+      mv.setAttribute("max-camera-orbit", "auto auto " + r);
+      /* Pinning the range does not move a camera already inside it, so write
+         the radius through too. Only once loaded: before that getCameraOrbit
+         reports zeroes, and writing those back points the camera at the sky. */
+      if(!mv.loaded) return;
+      var o = mv.getCameraOrbit();
+      mv.cameraOrbit = o.theta + "rad " + o.phi + "rad " + r;
+    }
+
+    var queued = false;
+    function draw(){
+      queued = false;
+      var sr = stage.getBoundingClientRect();
+      if(!sr.width) return;
+      pairs.forEach(function(p){
+        /* model-viewer drops data-visible when the point faces away */
+        var on = p.anchor.hasAttribute("data-visible");
+        p.label.classList.toggle("is-on", on);
+        p.line.classList.toggle("is-on", on);
+        if(!on) return;
+        var ar = p.anchor.getBoundingClientRect();
+        var lr = p.label.getBoundingClientRect();
+        var toLeft = p.label.classList.contains("model-label--left");
+        /* the line leaves the label on the side facing the device, with a
+           small gap so it never touches the text */
+        var x1 = (toLeft ? lr.right + 8 : lr.left - 8) - sr.left;
+        var y1 = lr.top + lr.height / 2 - sr.top;
+        p.line.setAttribute("x1", x1);
+        p.line.setAttribute("y1", y1);
+        p.line.setAttribute("x2", ar.left + ar.width / 2 - sr.left);
+        p.line.setAttribute("y2", ar.top + ar.height / 2 - sr.top);
+      });
+    }
+    function schedule(){
+      if(queued) return;
+      queued = true;
+      window.requestAnimationFrame(draw);
+    }
+
+    function wire(){
+      mv.addEventListener("camera-change", schedule, { passive:true });
+      mv.addEventListener("load", function(){
+        stage.classList.add("is-ready");
+        frame();
+        schedule();
+      });
+      /* the first drag hides the "drag to rotate" hint for good */
+      ["pointerdown", "touchstart", "keydown"].forEach(function(ev){
+        mv.addEventListener(ev, function(){ stage.classList.add("is-touched"); },
+                            { once:true, passive:true });
+      });
+      function onResize(){ frame(); schedule(); }
+      if("ResizeObserver" in window){ new ResizeObserver(onResize).observe(stage); }
+      else { window.addEventListener("resize", onResize, { passive:true }); }
+      onResize();
+    }
+
+    var started = false;
+    function start(){
+      if(started) return;
+      started = true;
+      var tag = document.createElement("script");
+      tag.type = "module";
+      tag.src = SRC;
+      document.head.appendChild(tag);
+      if(window.customElements && customElements.whenDefined){
+        customElements.whenDefined("model-viewer").then(wire);
+      } else {
+        tag.addEventListener("load", wire);
+      }
+    }
+
+    /* Start when the stage comes within a screen or two. IntersectionObserver
+       is the good path, but it is not the only trigger: a missed observer
+       would leave the model permanently blank, so a cheap geometry check on
+       scroll and resize backs it up. */
+    function near(){
+      var r = stage.getBoundingClientRect();
+      return r.top < window.innerHeight * 2 && r.bottom > -window.innerHeight;
+    }
+    function maybeStart(){
+      if(started) return;
+      if(near()){
+        start();
+        window.removeEventListener("scroll", maybeStart);
+        window.removeEventListener("resize", maybeStart);
+      }
+    }
+    if("IntersectionObserver" in window){
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(e){ if(e.isIntersecting){ start(); io.disconnect(); } });
+      }, { rootMargin:"600px 0px" });
+      io.observe(stage);
+    }
+    window.addEventListener("scroll", maybeStart, { passive:true });
+    window.addEventListener("resize", maybeStart, { passive:true });
+    maybeStart();
+  })();
+
   /* ---------- email addresses ----------
      The address is stored reversed so no address-shaped string sits in the
      markup for a harvester to regex out, and is assembled here into a real
