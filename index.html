@@ -250,7 +250,7 @@
           </li>
           <li>
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 2"/><path d="M16.5 3.5l4 4"/><path d="M20.5 3.5l-4 4"/></svg>
-            <div><b>No subscription, no cloud requirement</b><p>Canary works fully offline. If you want dashboards and remote alerts, you can run the server yourself or create an account on our website.</p></div>
+            <div><b>No subscription, no cloud requirement</b><p>Canary works fully offline. If you want remote dashboards and alerts, host the server yourself or use our free cloud option.</p></div>
           </li>
           <li>
             <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
@@ -613,6 +613,48 @@
       <p class="lede">Seven sensor modules, one e&#8209;paper screen, and a battery that charges over the same USB&#8209;C cable as everything else you own.</p>
     </div>
 
+    <!-- 3D model. The library is fetched by site.js only when this nears the
+         viewport, so the 1.4MB glb and ~300KB of script cost nothing above. -->
+    <div class="model-stage js-only reveal" data-model-stage>
+      <model-viewer
+        src="assets/model/canary.glb"
+        poster="assets/model/canary-poster.webp"
+        alt="A 3D model of the Canary you can rotate, labelled with its screen, sensors, ports and buttons."
+        camera-controls disable-zoom disable-pan interaction-prompt="none"
+        touch-action="pan-y"
+        tone-mapping="neutral" exposure="1"
+        shadow-intensity="0"
+        camera-orbit="25deg 108deg 0.30m"
+        field-of-view="30deg" min-field-of-view="30deg" max-field-of-view="30deg"
+        loading="lazy" reveal="auto">
+        <button class="mv-anchor" slot="hotspot-9" data-position="0.010749253755736904m 0.05845660651110651m 0.007610910806412759m" data-normal="-0.0013509719545387495m 0.19367073851405722m -0.9810656552536114m"
+                data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
+        <button class="mv-anchor" slot="hotspot-3" data-position="0.024719046237830264m -0.002694435828197414m 0.00819743441701598m" data-normal="0.00003704908482417393m -0.9945712907831095m -0.10405741769515958m"
+                data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
+        <button class="mv-anchor" slot="hotspot-8" data-position="0.039367157100122646m 0.004102558099080052m -0.001637600303813421m" data-normal="-7.549789312561174e-8m 1.3435884413268258e-7m -0.9999999999999882m"
+                data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
+        <button class="mv-anchor" slot="hotspot-10" data-position="0.08889026808501818m 0.062138330364368825m 0.009020838869043967m" data-normal="-0.0014249356273135423m 0.6287838320070398m -0.777578846268982m"
+                data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
+        <button class="mv-anchor" slot="hotspot-1" data-position="0.08180592966178098m 0.03224358192576822m 0.015122796359519259m" data-normal="7.549789312561174e-8m -1.3435884413268258e-7m 0.9999999999999882m"
+                data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
+        <button class="mv-anchor" slot="hotspot-6" data-position="0.1097972161528038m 0.02195390991883068m 0.006247064480934768m" data-normal="0.9999999999999943m -7.549790326942322e-8m -7.549790326942322e-8m"
+                data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
+        <button class="mv-anchor" slot="hotspot-4" data-position="0.10061678616864558m -0.0028199035723344905m 0.009392762175267959m" data-normal="-0.000050737586602105166m -0.994572709352497m -0.10404385247063434m"
+                data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
+      </model-viewer>
+      <svg class="model-lines" aria-hidden="true" focusable="false"></svg>
+      <ul class="model-labels">
+      <li class="model-label model-label--right" data-for="hotspot-9">UV&#8209;B and light sensors</li>
+      <li class="model-label model-label--left" data-for="hotspot-3">microSD card</li>
+      <li class="model-label model-label--left" data-for="hotspot-8">USB&#8209;C port</li>
+      <li class="model-label model-label--left" data-for="hotspot-10">Touch button</li>
+      <li class="model-label model-label--right" data-for="hotspot-1">E&#8209;paper screen</li>
+      <li class="model-label model-label--right" data-for="hotspot-6">Air inlet and outlet</li>
+      <li class="model-label model-label--right" data-for="hotspot-4">Reset button</li>
+      </ul>
+      <p class="model-hint" aria-hidden="true">Drag to rotate</p>
+    </div>
+
     <div class="spec-cols reveal">
       <div class="disclosure">
         <!-- Display is the only group open by default, at every width. -->
@@ -621,7 +663,7 @@
           <dl>
             <div><dt>Type</dt><dd>E&#8209;paper, monochrome</dd></div>
             <div><dt>Diagonal</dt><dd>4.26&Prime;</dd></div>
-            <div><dt>Resolution</dt><dd>800 &times; 480</dd></div>
+            <div><dt>Resolution</dt><dd>800 &times; 480  &middot; 220 ppi</dd></div>
             <div><dt>Backlight</dt><dd>None</dd></div>
             <div><dt>Refresh</dt><dd>1.5 s full refresh</dd></div>
           </dl>
@@ -659,6 +701,14 @@
             <div><dt>Weight</dt><dd>118 g</dd></div>
             <div><dt>Enclosure</dt><dd>Soft-touch, user-openable</dd></div>
             <div><dt>Operating range</dt><dd>0 to 50 &deg;C</dd></div>
+          </dl>
+        </details>
+        <details class="spec-group">
+          <summary><h3>Alerts</h3><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <dl>
+            <div><dt>Notification light</dt><dd>RGB, diffused through the top of the enclosure</dd></div>
+            <div><dt>Sound</dt><dd>Buzzer, customisable melody</dd></div>
+            <div><dt>Silent mode</dt><dd>Light only, no sound</dd></div>
           </dl>
         </details>
       </div>
