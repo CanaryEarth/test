@@ -614,7 +614,14 @@
     </div>
 
     <!-- 3D model. The library is fetched by site.js only when this nears the
-         viewport, so the 1.4MB glb and ~300KB of script cost nothing above. -->
+         viewport, so the 1.4MB glb and ~300KB of script cost nothing above.
+
+         orientation="0deg -6deg 0deg" pitches the model back 6 degrees: the
+         export has the Canary standing perfectly upright, but on a desk the
+         screen leans back that much. NEGATIVE pitch leans it back; positive
+         tips it forward onto its face. The hotspots rotate with the model, so
+         their data-position and data-normal values stay correct and the glb
+         needs no re-export. -->
     <div class="model-stage js-only reveal" data-model-stage>
       <model-viewer
         src="assets/model/canary.glb"
@@ -624,22 +631,23 @@
         touch-action="pan-y"
         tone-mapping="neutral" exposure="1"
         shadow-intensity="0"
+        orientation="0deg -6deg 0deg"
         camera-orbit="25deg 108deg 0.30m"
         field-of-view="30deg" min-field-of-view="30deg" max-field-of-view="30deg"
         loading="lazy" reveal="auto">
-        <button class="mv-anchor" slot="hotspot-9" data-position="0.010749253755736904m 0.05845660651110651m 0.007610910806412759m" data-normal="-0.0013509719545387495m 0.19367073851405722m -0.9810656552536114m"
+        <button class="mv-anchor" slot="hotspot-9" data-position="0.010749253755736904m 0.058931931914884501m 0.0014588381942246204m" data-normal="-0.0013509719545387495m 0.090060504636039942m -0.99593537962032463m"
                 data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
-        <button class="mv-anchor" slot="hotspot-3" data-position="0.024719046237830264m -0.002694435828197414m 0.00819743441701598m" data-normal="0.00003704908482417393m -0.9945712907831095m -0.10405741769515958m"
+        <button class="mv-anchor" slot="hotspot-3" data-position="0.024719046237830264m -0.0018228102044590224m 0.0084341732500626317m" data-normal="3.7049084824173927e-05m -0.99999988715176347m 0.00047362836236675143m"
                 data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
-        <button class="mv-anchor" slot="hotspot-8" data-position="0.039367157100122646m 0.004102558099080052m -0.001637600303813421m" data-normal="-7.549789312561174e-8m 1.3435884413268258e-7m -0.9999999999999882m"
+        <button class="mv-anchor" slot="hotspot-8" data-position="0.039367157100122646m 0.0039089080133512949m -0.0020574634515672869m" data-normal="-7.5497893125611745e-08m -0.10452832964483991m -0.99452190941258511m"
                 data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
-        <button class="mv-anchor" slot="hotspot-10" data-position="0.08889026808501818m 0.062138330364368825m 0.009020838869043967m" data-normal="-0.0014249356273135423m 0.6287838320070398m -0.777578846268982m"
+        <button class="mv-anchor" slot="hotspot-10" data-position="0.088890268085018181m 0.062740864513358294m 0.0024761975868481537m" data-normal="-0.0014249356273135423m 0.54406016651463551m -0.83904499567694546m"
                 data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
-        <button class="mv-anchor" slot="hotspot-1" data-position="0.08180592966178098m 0.03224358192576822m 0.015122796359519259m" data-normal="7.549789312561174e-8m -1.3435884413268258e-7m 0.9999999999999882m"
+        <button class="mv-anchor" slot="hotspot-1" data-position="0.081805929661780977m 0.033647710874047422m 0.011669580029792279m" data-normal="7.5497893125611745e-08m 0.10452832964483991m 0.99452190941258511m"
                 data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
-        <button class="mv-anchor" slot="hotspot-6" data-position="0.1097972161528038m 0.02195390991883068m 0.006247064480934768m" data-normal="0.9999999999999943m -7.549790326942322e-8m -7.549790326942322e-8m"
+        <button class="mv-anchor" slot="hotspot-6" data-position="0.1097972161528038m 0.022486640153345873m 0.0039180339415351975m" data-normal="0.99999999999999434m -8.2975997664520102e-08m -6.7192638047154571e-08m"
                 data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
-        <button class="mv-anchor" slot="hotspot-4" data-position="0.10061678616864558m -0.0028199035723344905m 0.009392762175267959m" data-normal="-0.000050737586602105166m -0.994572709352497m -0.10404385247063434m"
+        <button class="mv-anchor" slot="hotspot-4" data-position="0.10061678616864558m -0.0018226448494945602m 0.0096360678282700063m" data-normal="-5.0737586602105166e-05m -0.99999987999800588m 0.00048726755605080219m"
                 data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
       </model-viewer>
       <svg class="model-lines" aria-hidden="true" focusable="false"></svg>
@@ -663,7 +671,7 @@
           <dl>
             <div><dt>Type</dt><dd>E&#8209;paper, monochrome</dd></div>
             <div><dt>Diagonal</dt><dd>4.26&Prime;</dd></div>
-            <div><dt>Resolution</dt><dd>800 &times; 480  &middot; 220 ppi</dd></div>
+            <div><dt>Resolution</dt><dd>800 &times; 480</dd></div>
             <div><dt>Backlight</dt><dd>None</dd></div>
             <div><dt>Refresh</dt><dd>1.5 s full refresh</dd></div>
           </dl>
