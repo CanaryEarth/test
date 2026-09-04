@@ -387,17 +387,17 @@
         <div class="rd-cap" data-cap="4">
           <span class="sensor-tag">Ambient pressure</span>
           <h3>A full day of barometer.</h3>
-          <p>Most barometers give you a number and a weather symbol. This one plots the whole day, so you see the slope rather than a snapshot, with an illustration that follows the trend and the reading in kilopascals underneath.</p>
+          <p>Most barometers give you a number and a weather symbol. This one plots the whole day, so you see the slope rather than a snapshot, with an illustration that follows the trend and the reading in kilopascals, hectpascals or millibars underneath.</p>
         </div>
         <div class="rd-cap" data-cap="5">
           <span class="sensor-tag">Ultraviolet &amp; light</span>
           <h3>Sunlight, measured twice.</h3>
-          <p>A true UV&#8209;B sensor, reading the 240&ndash;320&nbsp;nm band directly rather than estimating it from visible light the way most consumer sensors do. Luminosity shares the screen, so the two curves sit side by side and you can watch them disagree.</p>
+          <p>A true UV&#8209;B sensor, reading the 240&ndash;320&nbsp;nm band directly rather than estimating it from visible light the way most consumer sensors do. Luminosity shares the screen, so you can tell if your office suspiciously illuminates in the dead of night while you're not there.</p>
         </div>
         <div class="rd-cap" data-cap="6">
           <span class="sensor-tag">Photo viewer</span>
           <h3>A picture frame when you want one.</h3>
-          <p>Take a photo in the app and it lands on your own Canary. Or on one you gave to somebody else, sitting on a shelf across the country. Everything is dithered down to one bit, which is the look e&#8209;paper does better than any backlit screen in the house.</p>
+          <p>Take a photo in the app and it lands on your own Canary. Or on one you gave to somebody else, sitting on a shelf across the country. Everything is dithered down to one bit, which is the newsprint look e&#8209;paper does better than any backlit screen in the house.</p>
         </div>
         <div class="rd-cap" data-cap="7">
           <span class="sensor-tag">Clock</span>
@@ -660,7 +660,18 @@
       <li class="model-label model-label--right" data-for="hotspot-6">Air inlet and outlet</li>
       <li class="model-label model-label--right" data-for="hotspot-4">Reset button</li>
       </ul>
-      <p class="model-hint" aria-hidden="true">Drag to rotate</p>
+      <p class="model-hint" aria-hidden="true">
+        <!-- viewBox opens 4 units above the frame to make room for the tap
+             halo: the index fingertip already sits at y=2 in the stock icon. -->
+        <svg class="model-hint-icon" viewBox="0 -4 24 28" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+          <path class="model-hint-tap" d="M3.8 2.5A4.5 4.5 0 0 1 12.2 2.5"/>
+          <path d="M10 9.5V4a2 2 0 0 0-4 0v10"/>
+          <path d="M14 10V9a2 2 0 0 0-4 0v1"/>
+          <path d="M18 11v-1a2 2 0 0 0-4 0"/>
+          <path d="M18 11a2 2 0 1 1 4 0v3a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>
+        </svg>
+        <span>Drag to rotate</span>
+      </p>
     </div>
 
     <div class="spec-cols reveal">
@@ -792,41 +803,42 @@
   </div>
 
   <div class="rail" id="quoteRail" data-rail tabindex="0" role="region" aria-label="What early users say: scrollable quotes">
+	  <figure class="why-card quote reveal d1">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>We do a lot of in-person wellness workshops, and people actually notice it sitting on the table. It's a nice subtle way to show guests we're paying attention to the environment.</blockquote>
+        <figcaption><cite>Triana Shaw</cite><span>CEO, The Atlas Connective</span></figcaption>
+      </figure>
+	  
+	  <figure class="why-card quote reveal d1">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>I was pretty skeptical at first. But after seeing the real-time data during wildfire season, we actually bought an air purifier for the main office.</blockquote>
+        <figcaption><cite>Mikhail Pivovar</cite><span>CEO, Routey OS</span></figcaption>
+      </figure>
+	  
+      <figure class="why-card quote reveal">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>Pack twenty people into a workshop room for four hours and the air gets heavy fast. The graph on screen makes it obvious when we need to pause for a stretch break and open the windows.</blockquote>
+        <figcaption><cite>Nicole Cummings-Morgan</cite><span>Founder, W1derus Educational Workshops Inc.</span></figcaption>
+      </figure>	  
+	  
+      <figure class="why-card quote reveal d2">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>My lab gets pretty warm with all the hardware and server gear running constantly. Canary sits right next to my dev rig so I can track temperature spikes and it even showed me when a power supply was smoking.</blockquote>
+        <figcaption><cite>Reza Ghochkhani</cite><span>Founder, HADHOX</span></figcaption>
+      </figure>
+	  
+      <figure class="why-card quote reveal d2">
+        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
+        <blockquote>Developing global hardware partnerships requires endless travel and long boardroom hours; Canary keeps my immediate breathing space healthy wherever I land.</blockquote>
+        <figcaption><cite>Konstantin Benkovskiy</cite><span>CEO, BenKo</span></figcaption>
+      </figure>
+	  
       <figure class="why-card quote reveal">
         <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
         <blockquote>Canary is a game-changer for executive health, keeping my air clean and my focus sharp during long investment strategy sessions at the office.</blockquote>
         <figcaption><cite>Avital Aronov</cite><span>Founder, Prime AI Growth Office</span></figcaption>
       </figure>
 
-      <figure class="why-card quote reveal d1">
-        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
-        <blockquote>As a high-growth tech operation, keeping our team's workspace healthy is critical, and Canary ensures our indoor air quality matches our high performance.</blockquote>
-        <figcaption><cite>Mikhail Pivovar</cite><span>CEO, Routey OS</span></figcaption>
-      </figure>
-
-      <figure class="why-card quote reveal d2">
-        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
-        <blockquote>Developing global hardware partnerships requires endless travel and long boardroom hours; Canary keeps my immediate breathing space healthy wherever I land.</blockquote>
-        <figcaption><cite>Konstantin Benkovskiy</cite><span>CEO, BenKo</span></figcaption>
-      </figure>
-
-      <figure class="why-card quote reveal">
-        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
-        <blockquote>In our educational workshops, a healthy environment is the foundation for learning, and Canary helps us ensure our spaces promote peak cognitive focus.</blockquote>
-        <figcaption><cite>Nicole Cummings-Morgan</cite><span>Founder, W1derus Educational Workshops Inc.</span></figcaption>
-      </figure>
-
-      <figure class="why-card quote reveal d1">
-        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
-        <blockquote>Hosting community events and collaborative wellness workshops means prioritizing guest safety; Canary gives us visual assurance of clean, safe indoor air.</blockquote>
-        <figcaption><cite>Triana Shaw</cite><span>CEO, The Atlas Connective</span></figcaption>
-      </figure>
-
-      <figure class="why-card quote reveal d2">
-        <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
-        <blockquote>As a technical founder constantly working around server racks and development hardware, Canary is essential for keeping my lab environment healthy.</blockquote>
-        <figcaption><cite>Reza Ghochkhani</cite><span>Founder, HADHOX</span></figcaption>
-      </figure>
   </div>
 </section>
 
