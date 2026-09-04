@@ -327,11 +327,16 @@
         frame();
         schedule();
       });
-      /* the first drag hides the "drag to rotate" hint for good */
-      ["pointerdown", "touchstart", "keydown"].forEach(function(ev){
-        mv.addEventListener(ev, function(){ stage.classList.add("is-touched"); },
-                            { once:true, passive:true });
-      });
+      /* The hint goes only once the model has actually been turned, not on a
+         stray tap or a scroll that grazes it. A reader who pokes it without
+         rotating still needs telling. model-viewer marks camera changes it
+         caused itself as "none", so user-interaction is the real thing, and
+         zoom and pan are both disabled, which leaves rotation. */
+      mv.addEventListener("camera-change", function(e){
+        if(e.detail && e.detail.source === "user-interaction"){
+          stage.classList.add("is-touched");
+        }
+      }, { passive:true });
       function onResize(){ frame(); schedule(); }
       if("ResizeObserver" in window){ new ResizeObserver(onResize).observe(stage); }
       else { window.addEventListener("resize", onResize, { passive:true }); }

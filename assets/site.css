@@ -528,11 +528,11 @@ a{ color:inherit }
 .model-stage model-viewer{
   position:absolute; inset:0; width:100%; height:100%;
   background:transparent; --poster-color:transparent;
-  filter:drop-shadow(60px 33px 20px rgb(30 32 34 / .26));
+  filter:drop-shadow(100px 80px 20px rgb(30 32 34 / .26));
 }
 @media (max-width:700px){
   /* a phone is held below the eye, so the light reads as higher up */
-  /* .model-stage model-viewer{ filter:drop-shadow(0 12px 15px rgb(30 32 34 / .28)) } */
+  .model-stage model-viewer{ filter:drop-shadow(60px 46px 17px rgb(30 32 34 / .28)) } */
 }
 @media (prefers-reduced-motion: reduce){
   .model-stage model-viewer{ filter:none }
@@ -577,14 +577,48 @@ a{ color:inherit }
 /* nothing shows until the component has upgraded and the model has loaded */
 .model-stage:not(.is-ready) .model-label,
 .model-stage:not(.is-ready) .model-lines{ opacity:0 }
+/* Readers were missing that the model turns at all, so the hint is a good
+   deal louder than a caption: a pointer that mimes the gesture, over larger
+   text. It stays until the model is actually rotated, not merely tapped. */
 .model-hint{
   position:absolute; left:50%; bottom:0; transform:translateX(-50%);
-  margin:0; font-family:var(--font-mono); font-size:.68rem;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--muted);
-  opacity:0; transition:opacity 400ms var(--ease);
+  margin:0; display:flex; flex-direction:column; align-items:center;
+  gap:.45rem; font-family:var(--font-mono); font-size:.82rem;
+  letter-spacing:.13em; text-transform:uppercase; color:var(--muted);
+  opacity:0; transition:opacity 400ms var(--ease); pointer-events:none;
 }
+.model-hint-icon{ width:34px; height:34px; color:var(--ink); flex:none }
+/* the halo only shows while the finger is down, so it reads as contact
+   rather than as part of the hand */
+.model-hint-tap{ opacity:0 }
 .model-stage.is-ready .model-hint{ opacity:1 }
 .model-stage.is-touched .model-hint{ opacity:0 }
+/* press, carry right, carry left, release, pause */
+@keyframes hint-drag{
+   0%,  8%{ transform:translateX(0)     scale(1)    }
+  14%    { transform:translateX(0)     scale(.88)  }
+  36%    { transform:translateX(17px)  scale(.88)  }
+  60%    { transform:translateX(-17px) scale(.88)  }
+  74%    { transform:translateX(0)     scale(.88)  }
+  80%,100%{ transform:translateX(0)    scale(1)    }
+}
+/* keyed to hint-drag: on as the finger presses, off as it lifts */
+@keyframes hint-tap{
+   0%, 10%{ opacity:0 }
+  16%, 72%{ opacity:1 }
+  80%, 100%{ opacity:0 }
+}
+.model-stage.is-ready .model-hint-icon{
+  animation:hint-drag 3.4s var(--ease) infinite;
+}
+.model-stage.is-ready .model-hint-tap{
+  animation:hint-tap 3.4s var(--ease) infinite;
+}
+@media (prefers-reduced-motion: reduce){
+  .model-stage.is-ready .model-hint-icon{ animation:none }
+  /* nothing is moving, so the halo just stands for "this is touchable" */
+  .model-stage.is-ready .model-hint-tap{ animation:none; opacity:1 }
+}
 
 @media (max-width:700px){
   /* taller than it is wide, so the labels have vertical room to separate,
