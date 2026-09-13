@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Canary: Know what you are breathing</title>
 <meta name="description" content="Canary is a pocketable environmental monitor with an e-paper display. Seven sensors, a full day of history at a glance, and no subscription. Join the founding-batch waitlist.">
-<meta name="theme-color" content="#F4F1EA">
+<meta name="theme-color" content="#EFF2EC">
 <meta property="og:title" content="Canary: Know what you are breathing">
 <meta property="og:description" content="A pocketable environmental monitor with an e-paper display. Seven sensors. A full day of history at a glance. No subscription.">
 <meta property="og:type" content="website">
@@ -38,7 +38,7 @@
 
 <!-- EDIT-ME DATE -->
 <div class="announce">
-  <a href="#waitlist">
+  <a href="#waitlist" data-source="index-bar">
     <span class="announce-dot" aria-hidden="true"></span>
     <span>Founding batch ships <em>Fall 2026</em>. Waitlist members get early-bird pricing</span>
     <svg class="announce-arrow" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -70,7 +70,7 @@
     </a>
 
     <div class="nav-right">
-      <a class="btn nav-cta" href="#waitlist">Join the waitlist</a>
+      <a class="btn nav-cta" href="#waitlist" data-source="index-header"><span>Join<span class="nav-cta-more"> the waitlist</span></span></a>
     </div>
   </div>
 </header>
@@ -91,34 +91,16 @@
   <a href="science.html">Science</a>
   <a href="#faq">FAQ</a>
   <a href="history.html">History</a>
-  <a class="btn" href="#waitlist">Join the waitlist</a>
+  <a class="btn" href="#waitlist" data-source="index-menu">Join the waitlist</a>
 </div>
 
 <main id="main">
 
 <!-- ============================= HERO ============================= -->
 <section class="hero wrap" id="top">
-  <!-- EDIT-ME DATE -->
-  <p class="eyebrow">Founding batch &middot; Fall 2026</p>
   <h1>Know what you are<br><span class="stroke-gold">actually breathing.</span></h1>
   <p class="lede">Canary is a pocketable environmental monitor with an e&#8209;paper display. Seven sensors, a full day of history on screen, and nothing to subscribe to. Put it on a desk, a nightstand or a nursery shelf and it just keeps watch.</p>
 
-  <form class="hero-form" action="https://formspree.io/f/mqpznawg" method="POST" data-waitlist novalidate>
-    <!-- EDIT-ME FORMSPREE ID (above) -->
-    <label class="visually-hidden" for="email-hero">Email address</label>
-    <div class="field-row">
-      <input id="email-hero" type="email" name="email" required autocomplete="email"
-             inputmode="email" placeholder="you@example.com" aria-describedby="note-hero">
-      <button class="btn" type="submit">
-        <span data-label>Join the waitlist</span>
-      </button>
-    </div>
-    <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-    <input type="hidden" name="_subject" value="Canary waitlist signup">
-    <input type="hidden" name="source" value="hero">
-    <p class="form-note" id="note-hero">Early-bird pricing and first access. No other email, ever.</p>
-    <p class="form-status" role="status" aria-live="polite"></p>
-  </form>
 
   <div class="hero-media">
     <picture>
@@ -148,13 +130,36 @@
   </div>
 </section>
 
+<!-- ========================== HERO CTA =========================== -->
+<!-- Hidden rather than deleted, so it can come back: remove `hidden`.
+     On phones it was the only visible signup route between the top of
+     the page and the pricing card; the header Join button now covers
+     every screen. Signups from it are tagged source=hero. -->
+<section class="hero-cta wrap" aria-label="Join the waitlist" hidden>
+  <form class="hero-form" action="https://formspree.io/f/mqpznawg" method="POST" data-waitlist novalidate>
+    <!-- EDIT-ME FORMSPREE ID (above) -->
+    <label class="visually-hidden" for="email-hero">Email address</label>
+    <div class="field-row">
+      <input id="email-hero" type="email" name="email" required autocomplete="email"
+             inputmode="email" placeholder="you@example.com" aria-describedby="note-hero">
+      <button class="btn" type="submit">
+        <span data-label>Join the waitlist</span>
+      </button>
+    </div>
+    <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
+    <input type="hidden" name="_subject" value="Canary waitlist signup">
+    <input type="hidden" name="source" value="hero">
+    <p class="form-note" id="note-hero">Early-bird pricing and first access. No other email, ever.</p>
+    <p class="form-status" role="status" aria-live="polite"></p>
+  </form>
+</section>
+
 <!-- ============================ WHY =============================== -->
 <section class="section band" id="why" aria-labelledby="why-h">
   <div class="wrap">
     <div class="carousel-head carousel-head--center reveal">
       <div class="section-head" style="margin-bottom:0">
-        <p class="eyebrow">New to air monitors</p>
-        <h2 id="why-h">What each measurement actually tells you.</h2>
+        <h2 id="why-h">What each measurement really tells you.</h2>
         <p class="lede">None of it is visible, and a single number would not settle much anyway:
           812&nbsp;ppm is neither good nor bad until you know whether it is climbing or falling.
           So Canary keeps the last 24&nbsp;hours of every measurement on screen. Here is what
@@ -210,9 +215,6 @@
   </div>
 
   <div class="wrap">
-    <p class="why-note reveal">Canary measures. It does not treat, prevent or fix any of this,
-      and it does not clean your air. It keeps the last day on screen so you can see the shape
-      rather than a single number; what to do about it stays with you.</p>
   </div>
 </section>
 
@@ -220,7 +222,6 @@
 <section class="section" id="product">
   <div class="wrap">
     <div class="section-head reveal">
-      <p class="eyebrow">The device</p>
       <h2>More than a monitor.</h2>
       <p class="lede">Most air quality gadgets give you one number and a coloured ring. Canary gives you the shape of your whole day.</p>
     </div>
@@ -245,16 +246,16 @@
             <div><b>24 hours on screen</b><p>Every sensor plots its own history, so you see the spike and what caused it, not just the number right now.</p></div>
           </li>
           <li>
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16"/><path d="M12 9h5M12 13h5"/></svg>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3h9.5a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V10L8 7.5Z"/><path d="M10.5 5v3M13.25 5v3M16 5v3"/></svg>
             <div><b>Logs to a microSD card</b><p>Years of readings written locally. Pull the card, open the file. Nothing is held hostage behind an account.</p></div>
           </li>
           <li>
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 2"/><path d="M16.5 3.5l4 4"/><path d="M20.5 3.5l-4 4"/></svg>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><mask id="ico-offline-gap" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24"><rect width="24" height="24" fill="#fff" stroke="none"/><path d="M3 3l18 18" stroke="#000" stroke-width="3.6"/></mask><g mask="url(#ico-offline-gap)"><path d="M2.81 9.81A13 13 0 0 1 21.19 9.81"/><path d="M5.99 12.99A8.5 8.5 0 0 1 18.01 12.99"/><path d="M9.17 16.17A4 4 0 0 1 14.83 16.17"/></g><path d="M12 19h.01"/><path d="M3 3l18 18"/></svg>
             <div><b>No subscription, no cloud requirement</b><p>Canary works fully offline. If you want remote dashboards and alerts, host the server yourself or use our free cloud option.</p></div>
           </li>
           <li>
-            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
-            <div><b>Yours to reconfigure</b><p>Build your own screen layouts, choose which readings sit where, and schedule what the display fetches.</p></div>
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.94 11.94L18.64 3.24A1.5 1.5 0 0 1 20.76 5.36L12.06 14.06"/><path d="M9.94 11.94C7.5 12.5 5.2 14.5 5 17C4.8 19 4 20.3 2.8 21.2C5.5 21.4 8.6 20.8 10.3 18.8C11.6 17.3 12.4 15.6 12.06 14.06Z"/></svg>
+            <div><b>Yours to reconfigure</b><p>Build your own screen layouts, choose which readings sit where, and set the units for each reading independently: temperature in &deg;C&nbsp;or&nbsp;&deg;F, pressure in hPa, kPa, inHg or&nbsp;mmHg, particles by mass or&nbsp;count.</p></div>
           </li>
         </ul>
       </div>
@@ -266,7 +267,6 @@
 <section class="section band" id="sensors">
   <div class="wrap">
     <div class="section-head reveal">
-      <p class="eyebrow">Seven sensors</p>
       <h2>Every reading, plotted.</h2>
       <p class="lede">Sensor modules sourced from Switzerland, Germany and Korea. Each one draws its own 24&#8209;hour trace on the e&#8209;paper screen. <a href="science.html" style="color:var(--sage); text-decoration-color:var(--gold); text-underline-offset:3px">Why these measurements matter</a>.</p>
     </div>
@@ -387,7 +387,7 @@
         <div class="rd-cap" data-cap="4">
           <span class="sensor-tag">Ambient pressure</span>
           <h3>A full day of barometer.</h3>
-          <p>Most barometers give you a number and a weather symbol. This one plots the whole day, so you see the slope rather than a snapshot, with an illustration that follows the trend and the reading in kilopascals, hectpascals or millibars underneath.</p>
+          <p>Most barometers give you a number and a weather symbol. This one plots the whole day, so you see the slope rather than a snapshot, with an illustration that follows the trend and the reading in kilopascals, hectpascals or millibars.</p>
         </div>
         <div class="rd-cap" data-cap="5">
           <span class="sensor-tag">Ultraviolet &amp; light</span>
@@ -461,7 +461,6 @@
   <div class="wrap">
     <div class="carousel-head reveal">
       <div>
-        <p class="eyebrow">In the wild</p>
         <h2 id="lives-h">Where Canary lives.</h2>
       </div>
       <div class="carousel-nav">
@@ -582,10 +581,9 @@
         </picture>
       </div>
       <div class="split-body reveal d1">
-        <p class="eyebrow eyebrow--dark">Right to repair</p>
         <h2>Built to be opened.</h2>
         <p class="lede lede--dark">Every part you can see here is a part you can replace. The battery, the e&#8209;paper panel, the sensor module, the USB&#8209;C board: all of it comes apart with ordinary tools and goes back together again.</p>
-        <p class="lede lede--dark" style="margin-top:var(--s-4)">We would rather sell you one Canary that lasts a decade than five that do not. That is a design constraint, not a marketing line: no glue where a screw would do, no pairing locks, no parts you have to ask our permission to buy.</p>
+        <p class="lede lede--dark" style="margin-top:var(--s-4)">We would rather sell you one Canary that lasts a decade than five that do not. Right to repair is a design constraint here: no glue where a screw would do, no pairing locks, no parts you have to ask our permission to buy.</p>
       </div>
     </div>
   </div>
@@ -594,7 +592,6 @@
 <!-- ============================ SPECS ============================= -->
 <section class="section--tight" aria-labelledby="history-h">
   <div class="wrap history-teaser reveal">
-    <p class="eyebrow">Since 2019</p>
     <h2 id="history-h">Five years of getting here.</h2>
     <p class="lede">The first one was a hospital CO<sub>2</sub> sensor taped to a PC. The second lived in
       half a toothpaste box. Nine prototypes later, this is the one you can buy.</p>
@@ -635,6 +632,10 @@
         camera-orbit="25deg 108deg 0.30m"
         field-of-view="30deg" min-field-of-view="30deg" max-field-of-view="30deg"
         loading="lazy" reveal="auto">
+        <!-- An empty slot replaces model-viewer's default loading bar, a 5px
+             strip at 40% black across the full width that read as a stray
+             scrollbar under the intro. The poster already covers the wait. -->
+        <div slot="progress-bar"></div>
         <button class="mv-anchor" slot="hotspot-9" data-position="0.010749253755736904m 0.058931931914884501m 0.0014588381942246204m" data-normal="-0.0013509719545387495m 0.090060504636039942m -0.99593537962032463m"
                 data-visibility-attribute="visible" tabindex="-1" aria-hidden="true"></button>
         <button class="mv-anchor" slot="hotspot-3" data-position="0.024719046237830264m -0.0018228102044590224m 0.0084341732500626317m" data-normal="3.7049084824173927e-05m -0.99999988715176347m 0.00047362836236675143m"
@@ -751,7 +752,7 @@
             <div><dt>Carbon dioxide</dt><dd>ppm, NDIR</dd></div>
             <div><dt>Temperature</dt><dd>&deg;C / &deg;F</dd></div>
             <div><dt>Relative humidity</dt><dd>%RH</dd></div>
-            <div><dt>Barometric pressure</dt><dd>kPa / inHg</dd></div>
+            <div><dt>Barometric pressure</dt><dd>hPa / kPa / inHg / mmHg</dd></div>
             <div><dt>CO2 range</dt><dd>0 to 5,000 ppm</dd></div>
             <div><dt>CO2 accuracy</dt><dd>&plusmn;3 %</dd></div>
             <div><dt>Temp accuracy</dt><dd>&plusmn;0.8 &deg;C</dd></div>
@@ -772,7 +773,7 @@
           <dl>
             <div><dt>History</dt><dd>24 h per reading</dd></div>
             <div><dt>Layouts</dt><dd>User configurable</dd></div>
-            <div><dt>Units</dt><dd>Metric or imperial</dd></div>
+            <div><dt>Units</dt><dd>Set per reading</dd></div>
           </dl>
         </details>
       </div>
@@ -787,7 +788,6 @@
   <div class="wrap">
     <div class="carousel-head carousel-head--center reveal">
       <div class="section-head" style="margin-bottom:0">
-        <p class="eyebrow">Early users</p>
         <h2 id="quotes-h">Tested in real rooms.</h2>
         <p class="lede">Founders, operators and educators who put a Canary on their desk before we had a website to put it on.</p>
       </div>
@@ -805,13 +805,13 @@
   <div class="rail" id="quoteRail" data-rail tabindex="0" role="region" aria-label="What early users say: scrollable quotes">
 	  <figure class="why-card quote reveal d1">
         <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
-        <blockquote>We do a lot of in-person wellness workshops, and people actually notice it sitting on the table. It's a nice subtle way to show guests we're paying attention to the environment.</blockquote>
+        <blockquote>We do a lot of in-person wellness workshops, and people notice it sitting on the table. It's a nice subtle way to show guests we're paying attention to the environment.</blockquote>
         <figcaption><cite>Triana Shaw</cite><span>CEO, The Atlas Connective</span></figcaption>
       </figure>
 	  
 	  <figure class="why-card quote reveal d1">
         <svg class="quote-mark" viewBox="0 0 24 18" fill="currentColor" aria-hidden="true"><path d="M0 18V9.6C0 4.3 3 .9 8 0l1 2.7C6 3.6 4.4 5.3 4.3 7.6H8V18H0zm14 0V9.6c0-5.3 3-8.7 8-9.6l1 2.7c-3 .9-4.6 2.6-4.7 4.9H22V18h-8z"/></svg>
-        <blockquote>I was pretty skeptical at first. But after seeing the real-time data during wildfire season, we actually bought an air purifier for the main office.</blockquote>
+        <blockquote>I was pretty skeptical at first. But after seeing the real-time data during wildfire season, we bought an air purifier for the main office.</blockquote>
         <figcaption><cite>Mikhail Pivovar</cite><span>CEO, Routey OS</span></figcaption>
       </figure>
 	  
@@ -892,7 +892,6 @@
 <section class="section band" id="pricing">
   <div class="wrap">
     <div class="section-head reveal">
-      <p class="eyebrow">Founding batch</p>
       <h2>First units, first price.</h2>
       <p class="lede">The founding batch is small and hand-checked. Waitlist members get early-bird pricing and the first shipping slots.</p>
     </div>
@@ -935,7 +934,7 @@
           </li>
         </ul>
 
-        <a class="btn" href="#waitlist" style="width:100%">Join the waitlist for this price</a>
+        <a class="btn" href="#waitlist" data-source="index-pricing" style="width:100%">Join the waitlist for this price</a>
         <p class="price-fine">Joining the waitlist does not charge you anything and does not commit you to buying.</p>
       </div>
     </div>
@@ -946,7 +945,6 @@
 <section class="section dark waitlist" id="waitlist">
   <div class="wrap">
     <div class="reveal">
-      <p class="eyebrow eyebrow--dark">The waitlist</p>
       <h2>Be first in line.</h2>
       <p class="lede lede--dark">Leave your email and we will tell you once: when the founding batch opens, with your early-bird price attached. That is the entire mailing list.</p>
     </div>
@@ -963,7 +961,7 @@
       </div>
       <input class="hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
       <input type="hidden" name="_subject" value="Canary waitlist signup">
-      <input type="hidden" name="source" value="main">
+      <input type="hidden" name="source" value="index-scroll">
       <p class="form-note" id="note-main">One email at launch. No newsletter, no partners, no resale. Unsubscribe is a link in the same email.</p>
       <p class="form-status" role="status" aria-live="polite"></p>
     </form>
@@ -974,7 +972,6 @@
 <section class="section" id="faq">
   <div class="wrap">
     <div class="section-head reveal">
-      <p class="eyebrow">Before you ask</p>
       <h2>Questions, answered.</h2>
     </div>
 
@@ -982,6 +979,11 @@
       <details>
         <summary><span>What does Canary measure?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
         <div class="faq-a"><p>Fine particulate matter (PM<sub>2.5</sub>, and coarser and finer fractions), carbon dioxide, UV&#8209;B, temperature, relative humidity and ambient pressure. Particulates are the tiny airborne particles produced by wildfire smoke, traffic, wood burning and cooking, and they are one of the most important indicators of air quality.</p></div>
+      </details>
+
+      <details>
+        <summary><span>Can I change the units?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="faq-a"><p>Yes, and each reading has its own setting, so you can mix them: temperature in &deg;F alongside pressure in hPa, for instance. Temperature shows in &deg;C&nbsp;or&nbsp;&deg;F, pressure in hPa, kPa, inHg or&nbsp;mmHg, and particles either by mass&nbsp;(&micro;g/m&sup3;) or as a particle count&nbsp;(#/cm&sup3;).</p></div>
       </details>
 
       <details>
@@ -1078,7 +1080,7 @@
         <h3>More</h3>
         <ul>
           <li><a href="business.html">For organizations</a></li>
-          <li><a href="#waitlist">Join the waitlist</a></li>
+          <li><a href="#waitlist" data-source="index-footer">Join the waitlist</a></li>
           <li><a href="https://goaqs.org" rel="noopener">goaqs.org</a></li>
         </ul>
       </div>
