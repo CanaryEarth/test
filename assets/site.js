@@ -110,6 +110,43 @@
     });
   });
 
+  /* ---------- waitlist attribution ----------
+     The bottom form's hidden `source` field records how a signup reached
+     it, so Formspree shows which links earn their place. Values are
+     page-element: "index-header", "science-bar", "history-footer".
+
+     Links on this page carry data-source and set the field on click.
+     Links on the other pages cannot reach this form, so they carry ?from=
+     and it is read here on arrival, then dropped from the address bar so a
+     shared URL does not pass on someone else's attribution. The same
+     parameter works for outside campaigns: index.html?from=instagram#waitlist
+
+     Last click wins. With no click and no parameter the field keeps its
+     default, "index-scroll", or "direct-link" when the page was opened
+     straight onto #waitlist. ---------- */
+  var srcField = document.querySelector('#waitlist input[name="source"]');
+  if(srcField){
+    var tidySource = function(v){
+      return String(v || "").toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 40);
+    };
+    var fromParam = "";
+    try{ fromParam = tidySource(new URLSearchParams(location.search).get("from")); }catch(e){}
+    if(fromParam){
+      srcField.value = fromParam;
+      try{
+        var cleanUrl = new URL(location.href);
+        cleanUrl.searchParams.delete("from");
+        history.replaceState(history.state, "", cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+      }catch(e){}
+    } else if(location.hash === "#waitlist"){
+      srcField.value = "direct-link";
+    }
+    document.addEventListener("click", function(e){
+      var a = e.target.closest ? e.target.closest("a[data-source]") : null;
+      if(a){ srcField.value = tidySource(a.getAttribute("data-source")); }
+    });
+  }
+
   /* ---------- carousels ---------- */
   document.querySelectorAll("[data-rail]").forEach(function(rail){
     var prev = document.querySelector('[data-rail-prev="' + rail.id + '"]');
@@ -546,4 +583,122 @@
       });
     }, 1200);
   }
+
+  /* ---------- palette switcher (test harness) ----------
+     Scaffolding for judging alternate palettes on the real page rather
+     than on swatches. It is gated so it cannot reach a visitor:
+     localhost, a private LAN address, file://, or an explicit ?themes.
+
+     themes.css is injected here rather than linked from the four HTML
+     pages, so production never requests it and removing the whole
+     feature is this block plus one file. ---------- */
+  var host = location.hostname;
+  /* A phone reaches the dev server on the machine's LAN address, not on
+     localhost, so the gate has to admit private ranges or the switcher
+     would be missing on exactly the screens worth checking colour on.
+     None of these ranges are routable from the internet. */
+  var LAN = /^(localhost|127\.|\[?::1\]?$|10\.|192\.168\.|172\.(1[6-9]|2[0-9]|3[01])\.)/;
+  var themesOn = LAN.test(host) || /\.local$/.test(host)
+    || location.protocol === "file:"
+    || /[?&]themes\b/.test(location.search);
+
+  if(themesOn){
+    var PALETTES = [
+      ["", "Botanical (live)"],
+      ["solar", "Solar"],
+      ["cyanotype", "Cyanotype"],
+      ["graphite", "Graphite"],
+      ["ember", "Ember"]
+    ];
+
+    var link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "assets/themes.css";
+    document.head.appendChild(link);
+
+    /* Read before the sheet lands so each choice is applied on the first
+       paint of the next page rather than flashing the live version.
+       "botanical" was an alternate until it became the live palette, so a
+       value stored from then means the live one. The ground treatments were
+       retired and the translucent Join button went live, so their stored
+       keys are cleared rather than left behind. */
+    var savedPal = null;
+    try{
+      savedPal = localStorage.getItem("canary-palette");
+      if(savedPal === "botanical"){
+        savedPal = "";
+        localStorage.removeItem("canary-palette");
+      }
+      localStorage.removeItem("canary-ground");
+      localStorage.removeItem("canary-join");
+    }catch(e){}
+    if(savedPal){ document.documentElement.dataset.palette = savedPal; }
+
+    /* The testing panel: bottom-right at every width, holding every test
+       control. Add one with build(id, label, options, saved, apply). It
+       lives on <body> rather than in the header, because the header's
+       backdrop-filter makes it the containing block for position:fixed
+       descendants and would pin the panel to the header. */
+    var panel = document.createElement("div");
+    panel.className = "test-tools";
+    panel.setAttribute("role", "group");
+    panel.setAttribute("aria-label", "Testing options");
+
+    function build(id, label, opts, current, apply){
+      var lab = document.createElement("label");
+      lab.className = "visually-hidden";
+      lab.setAttribute("for", id);
+      lab.textContent = label;
+      var sel = document.createElement("select");
+      sel.id = id;
+      sel.title = label;
+      opts.forEach(function(o){
+        var op = document.createElement("option");
+        op.value = o[0];
+        op.textContent = o[1];
+        if(o[0] === (current || "")){ op.selected = true; }
+        sel.appendChild(op);
+      });
+      sel.addEventListener("change", function(){ apply(sel.value); });
+      panel.appendChild(lab);
+      panel.appendChild(sel);
+    }
+
+    build("paletteSel", "Palette (testing)", PALETTES, savedPal, function(v){
+      if(v){ document.documentElement.dataset.palette = v; }
+      else { delete document.documentElement.dataset.palette; }
+      try{ localStorage.setItem("canary-palette", v); }catch(e){}
+      repaintModel();
+      syncChrome();
+    });
+
+    document.body.appendChild(panel);
+
+    /* The model's drop shadow is a CSS filter over the page ground, so a
+       palette change leaves the previous ground baked into the composited
+       layer until something forces a repaint. */
+    function repaintModel(){
+      var mv = document.querySelector(".model-stage model-viewer");
+      if(!mv) return;
+      mv.style.willChange = "filter";
+      requestAnimationFrame(function(){ mv.style.willChange = ""; });
+    }
+
+    /* Phones tint the address bar from <meta name="theme-color">, which is
+       a literal in each page. Left alone, the browser chrome keeps the live
+       ground above a page showing an alternate, and that seam is exactly
+       what would skew a judgement made on a phone. The token is read once
+       the sheet has applied, not before. */
+    var chrome = document.querySelector('meta[name="theme-color"]');
+    function syncChrome(){
+      if(!chrome) return;
+      requestAnimationFrame(function(){
+        var col = getComputedStyle(document.documentElement)
+          .getPropertyValue("--cream").trim();
+        if(col){ chrome.setAttribute("content", col); }
+      });
+    }
+    link.addEventListener("load", syncChrome);
+  }
+
 })();

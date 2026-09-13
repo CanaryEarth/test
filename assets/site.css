@@ -1,31 +1,36 @@
 /* ==================================================================
    CANARY - design tokens
-   Palette from branding.txt, adjusted where WCAG required it:
-     - Gold #E8A838 on cream is 1.85:1 -> FILL ONLY, never text on
-       cream. Ink on gold is 7.85:1 (AAA), so gold buttons take ink.
-     - Sage #4A6B5B on ink is 2.76:1 -> dark surfaces use --sage-lit
-       (#95B8A5, 7.53:1) instead.
-     - Ember #D25A3C on cream is 3.53:1 -> body-size alert text uses
-       --ember-deep (#B8482A, 4.66:1).
+   Botanical palette: sage leads and gold is the single warm spark. It
+   replaced the branding.txt solar palette after both were tested on
+   desktop and phone, because the pale green ground makes the device's
+   e-paper screen stand out, the same reasoning behind the black case.
+   The WCAG-forced rules carried straight over; only the numbers moved:
+     - Gold #E0B44A on cream is 1.72:1 -> FILL ONLY, never text on
+       cream. Ink on gold is 8.42:1 (AAA), so gold buttons take ink.
+     - Sage #3C6B4E on ink is 2.66:1 -> dark surfaces use --sage-lit
+       (#96C4A4, 8.37:1) instead.
+     - Ember #B8543C on cream is 4.25:1 -> body-size alert text uses
+       --ember-deep (#A8462F, 5.19:1).
+   The solar values are kept in themes.css as an alternate.
    ================================================================== */
 :root{
   color-scheme: light;
 
-  --cream:      #F4F1EA;
-  --cream-2:    #EDE8DE;
-  --paper:      #FBFAF6;
-  --ink:        #1E2022;
-  --ink-2:      #2A2D30;
-  --muted:      #5C6461;
-  --muted-dark: #A8B0AC;
-  --gold:       #E8A838;
-  --gold-deep:  #C98A1E;
-  --sage:       #4A6B5B;
-  --sage-lit:   #95B8A5;
-  --ember:      #D25A3C;
-  --ember-deep: #B8482A;
-  --line:       #D2CCBE;
-  --line-dark:  #3A3E41;
+  --cream:      #EFF2EC;
+  --cream-2:    #E4EADE;
+  --paper:      #F8FAF5;
+  --ink:        #1B211D;
+  --ink-2:      #272E29;
+  --muted:      #556059;
+  --muted-dark: #A6B0AA;
+  --gold:       #E0B44A;
+  --gold-deep:  #C99A2C;
+  --sage:       #3C6B4E;
+  --sage-lit:   #96C4A4;
+  --ember:      #B8543C;
+  --ember-deep: #A8462F;
+  --line:       #CBD4C6;
+  --line-dark:  #363E39;
 
   --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-body:    "Source Serif 4", ui-serif, Georgia, "Times New Roman", serif;
@@ -36,8 +41,14 @@
   --s-9:6rem;   --s-10:8rem;
 
   --wrap: 1180px;
-  --radius: 14px;
-  --radius-lg: 22px;
+  /* Controls take their corners from the device. The enclosure edge is a
+     1.5mm radius on an 18.7mm-deep body, 8% of its thickness; 8% of a 48px
+     control is 4px. The object is a slab with crisp edges, not a capsule. */
+  --radius-control: 4px;
+  /* Surfaces round tighter than that ratio would imply. A card corner crops
+     the photograph inside it, and a dark card reads rounder than a light one
+     at the same value, so the photo cards set this and the panels follow. */
+  --radius-lg: 16px;
   --ease: cubic-bezier(.22,.61,.36,1);
   --dur: 240ms;
 
@@ -105,6 +116,10 @@ a{ color:inherit }
 .skip:focus-visible{ transform:none }
 :focus-visible{ outline:3px solid var(--ink); outline-offset:3px; border-radius:4px }
 .dark :focus-visible,.hero-form :focus-visible{ outline-color:var(--gold) }
+/* Nothing on the site sets display on an element it also hides, so the
+   attribute can be made to win outright. Without this, a later display
+   rule on .hero-cta would silently bring the hidden form back. */
+[hidden]{ display:none !important }
 .visually-hidden{
   position:absolute; width:1px; height:1px; padding:0; margin:-1px;
   overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
@@ -116,7 +131,7 @@ a{ color:inherit }
   display:inline-flex; align-items:center; justify-content:center; gap:.55rem;
   min-height:48px; padding:.8rem 1.5rem;
   background:var(--btn-bg); color:var(--btn-fg);
-  border:1.5px solid var(--btn-bd); border-radius:999px;
+  border:1.5px solid var(--btn-bd); border-radius:var(--radius-control);
   font-family:var(--font-display); font-weight:700; font-size:.975rem;
   letter-spacing:-.005em; text-decoration:none; cursor:pointer;
   transition:background var(--dur) var(--ease), color var(--dur) var(--ease),
@@ -152,7 +167,7 @@ a{ color:inherit }
 /* --- header ----------------------------------------------------- */
 .header{
   position:sticky; top:0; z-index:var(--z-nav);
-  background:rgb(244 241 234 / .86);
+  background:color-mix(in srgb, var(--cream) 86%, transparent);
   backdrop-filter:saturate(160%) blur(14px);
   -webkit-backdrop-filter:saturate(160%) blur(14px);
   border-bottom:1px solid var(--line);
@@ -163,6 +178,18 @@ a{ color:inherit }
 }
 .nav-left{ display:none; align-items:center; gap:var(--s-5) }
 .nav-right{ display:flex; align-items:center; justify-content:flex-end; gap:var(--s-3) }
+/* The header button is a gold tint on the frosted glass rather than a
+   solid gold block, so it reads as part of the header. It stays readable
+   over anything scrolling underneath: the header behind it is at least
+   86% cream, so thinning the gold only moves the fill lighter, away from
+   the ink label (10.0:1 over pure black, 13.2:1 over white, against 8.4:1
+   for solid gold). The gold-deep hairline holds the edge the pale fill no
+   longer does. Buttons in the page body stay solid. */
+.header .nav-cta{
+  --btn-bg:color-mix(in srgb, var(--gold) 20%, transparent);
+  --btn-bd:color-mix(in srgb, var(--gold-deep) 66%, transparent);
+}
+.header .nav-cta:hover{ background:color-mix(in srgb, var(--gold) 82%, transparent) }
 .nav-link{
   font-family:var(--font-display); font-size:.9rem; font-weight:600;
   text-decoration:none; color:var(--ink); position:relative;
@@ -189,13 +216,38 @@ a{ color:inherit }
   border-radius:10px; cursor:pointer; color:var(--ink);
   transition:background var(--dur) var(--ease);
 }
-.icon-btn:hover{ background:rgb(30 32 34 / .07) }
+.icon-btn:hover{ background:color-mix(in srgb, var(--ink) 7%, transparent) }
 .menu-btn{ justify-self:start }
-.nav-cta{ display:none }
+/* Below 1024 the header keeps a compact "Join" so a phone reader has a
+   one-tap route to the waitlist on every screen. Without it the first
+   visible one was twelve screens down. The rest of the label stays in the
+   accessible name, so a screen reader still hears "Join the waitlist". */
+@media (max-width:1023px){
+  /* Every item in the header is 44px, so 68px was 24px of padding costing
+     10% of a small phone's screen at every scroll position. 56px is the
+     Material mobile top bar and keeps a full 44px tap target. The anchor
+     offset drops by the same 12px so jumps still land 19px below it. */
+  html{ scroll-padding-top:4.75rem }
+  .header-in{ min-height:56px }
+  .nav-cta{ min-height:44px; padding:.45rem .8rem; font-size:.9rem }
+  .nav-cta-more{
+    position:absolute; width:1px; height:1px; margin:-1px; padding:0;
+    overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+  }
+}
+/* At 320px the three header columns no longer fit: Join ran 18px past the
+   content edge. The side columns share whatever the logo leaves, so the
+   room comes from the logo's tracking and the gaps, not from shrinking the
+   button's 44px tap height. */
+@media (max-width:370px){
+  .header-in{ column-gap:var(--s-3) }
+  .brand svg{ width:32px }
+  .brand-word{ letter-spacing:.2em; text-indent:.2em }
+  .nav-cta{ padding-inline:.6rem }
+}
 @media (min-width:1024px){
   .nav-left{ display:flex }
   .menu-btn{ display:none }
-  .nav-cta{ display:inline-flex }
 }
 
 /* --- mobile menu ------------------------------------------------ */
@@ -219,7 +271,7 @@ a{ color:inherit }
 .hero{ padding-top:clamp(var(--s-7),6vw,var(--s-9)); text-align:center }
 .hero h1{ margin-bottom:var(--s-5) }
 .hero h1 .stroke-gold{
-  background-image:linear-gradient(transparent 62%, rgb(232 168 56 / .55) 62%);
+  background-image:linear-gradient(transparent 62%, color-mix(in srgb, var(--gold) 55%, transparent) 62%);
   background-repeat:no-repeat;
 }
 .hero .lede{ margin-inline:auto; margin-bottom:var(--s-6) }
@@ -232,11 +284,18 @@ a{ color:inherit }
 
 /* --- inline email form ------------------------------------------ */
 .hero-form{ max-width:34rem; margin-inline:auto }
+/* The landing hero runs headline, photo, sensor strip, then the form. The
+   photo is the last thing in the hero so it sits flush against the strip,
+   which reads as one unit: the device, then what it measures. The form is a
+   section of its own below them, so a stranger meets the product before being
+   asked for anything. */
+.hero-cta{ padding-block:clamp(var(--s-6), 4.5vw, var(--s-8)); text-align:center }
+/* centring is for the note and status line; the field keeps its own start alignment */
 .field-row{ display:flex; flex-direction:column; gap:var(--s-3) }
 @media (min-width:560px){
   .field-row{
     flex-direction:row; background:var(--paper);
-    border:1.5px solid var(--line); border-radius:999px; padding:5px;
+    border:1.5px solid var(--line); border-radius:calc(var(--radius-control) + 5px); padding:5px;
     box-shadow:var(--shadow-sm);
     transition:border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
   }
@@ -246,7 +305,7 @@ a{ color:inherit }
 }
 .field-row input{
   flex:1 1 auto; min-width:0; min-height:48px;
-  padding:.8rem 1.1rem; border:1.5px solid var(--line); border-radius:999px;
+  padding:.8rem 1.1rem; border:1.5px solid var(--line); border-radius:var(--radius-control);
   background:var(--paper); color:var(--ink);
   font-family:var(--font-display); font-size:1rem;
   transition:border-color var(--dur) var(--ease);
@@ -483,7 +542,7 @@ a{ color:inherit }
 }
 .rd-dots button::after{
   content:""; width:8px; height:8px; border-radius:50%;
-  background:var(--line); border:1px solid #B5AD9A;
+  background:var(--line); border:1px solid color-mix(in srgb, var(--line), var(--ink) 19%);
   transition:background var(--dur) var(--ease), transform var(--dur) var(--ease);
 }
 .rd-dots button[aria-current="true"]::after{
@@ -706,7 +765,7 @@ a{ color:inherit }
 .price-badge{
   font-family:var(--font-mono); font-size:.7rem; font-weight:700;
   letter-spacing:.14em; text-transform:uppercase;
-  background:var(--gold); color:var(--ink); padding:.35rem .7rem; border-radius:999px;
+  background:var(--gold); color:var(--ink); padding:.35rem .7rem; border-radius:var(--radius-control);
 }
 .price-body{ padding:clamp(var(--s-6),4vw,var(--s-7)) }
 .price-figure{ display:flex; align-items:baseline; gap:var(--s-3); flex-wrap:wrap }
@@ -714,8 +773,8 @@ a{ color:inherit }
 .price-was{ font-family:var(--font-mono); font-size:1.1rem; color:var(--muted); text-decoration:line-through }
 .price-save{
   font-family:var(--font-display); font-weight:700; font-size:.85rem;
-  color:var(--ink); background:rgb(232 168 56 / .35);
-  padding:.25rem .6rem; border-radius:999px;
+  color:var(--ink); background:color-mix(in srgb, var(--gold) 35%, transparent);
+  padding:.25rem .6rem; border-radius:var(--radius-control);
 }
 .price-list{ list-style:none; margin:var(--s-6) 0; padding:0; display:grid; gap:var(--s-3) }
 .price-list li{ display:flex; gap:var(--s-3); align-items:flex-start; font-size:1rem }
@@ -916,7 +975,7 @@ a{ color:inherit }
 
 /* --- business page ----------------------------------------------- */
 .sci-fig-wrap--wide picture{ max-width:520px }
-.biz-chart{ width:100%; border-radius:var(--radius); border:1px solid var(--line); background:#fff }
+.biz-chart{ width:100%; border-radius:var(--radius-lg); border:1px solid var(--line); background:#fff }
 .biz-extra{
   display:grid; gap:var(--s-2); margin-top:var(--s-4);
   grid-template-columns:1fr;
@@ -957,7 +1016,7 @@ a{ color:inherit }
 }
 .deploy-grid > div{
   background:var(--paper); border:1px solid var(--line);
-  border-radius:var(--radius); padding:var(--s-5);
+  border-radius:var(--radius-lg); padding:var(--s-5);
 }
 .deploy-grid .ico{
   width:26px; height:26px; flex:none;
@@ -984,8 +1043,3 @@ a{ color:inherit }
 .why-card .sensor-tag{ margin-bottom:0 }
 .why-card h3{ font-size:1.12rem; line-height:1.25 }
 .why-card p{ color:var(--muted); font-size:.97rem; margin:0 }
-.why-note{
-  max-width:54rem; margin:clamp(var(--s-6),4vw,var(--s-7)) auto 0;
-  text-align:center; color:var(--muted); font-size:.98rem;
-}
-
