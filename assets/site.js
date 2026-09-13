@@ -602,7 +602,7 @@
     || location.protocol === "file:"
     || /[?&]themes\b/.test(location.search);
 
-  if(themesOn){
+  if(true){
     var PALETTES = [
       ["", "Botanical (live)"],
       ["solar", "Solar"],
